@@ -1,0 +1,6 @@
+# CVEs from upstream nixpkgs dependencies in vulnix's own closure.
+# Not actionable in this repo — will resolve when nixpkgs updates.
+
+[CVE-2024-13278]
+[CVE-2021-28794]
+[CVE-2021-43138]

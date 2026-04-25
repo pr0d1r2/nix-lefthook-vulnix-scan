@@ -21,8 +21,6 @@ jobs:
         run: nix build
       - name: Pre-commit checks
         run: TERM=dumb nix develop --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-commit --all-files'
-      - name: Clean build results
-        run: rm -f result result-*
       - name: Pre-push checks
         run: TERM=dumb nix develop --ignore-environment --keep TERM --command bash -c 'lefthook run pre-push --all-files'
 
@@ -39,7 +37,5 @@ jobs:
         run: nix build
       - name: Pre-commit checks
         run: TERM=dumb nix develop --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-commit --all-files'
-      - name: Clean build results
-        run: rm -f result result-*
       - name: Pre-push checks
         run: TERM=dumb nix develop --ignore-environment --keep TERM --command bash -c 'lefthook run pre-push --all-files'
