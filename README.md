@@ -1,5 +1,7 @@
 # nix-lefthook-vulnix-scan
 
+[![CI](https://github.com/pr0d1r2/nix-lefthook-vulnix-scan/actions/workflows/ci.yml/badge.svg)](https://github.com/pr0d1r2/nix-lefthook-vulnix-scan/actions/workflows/ci.yml)
+
 Lefthook-compatible vulnix vulnerability scanner for nix build results, packaged as a Nix flake.
 
 Scans nix build result symlinks (`result-darwin`, `result`) for known CVEs using [vulnix](https://github.com/nix-community/vulnix). Supports project-specific whitelists.
