@@ -24,6 +24,10 @@
       url = "github:pr0d1r2/nix-lefthook-trailing-whitespace";
       inputs.nixpkgs.follows = "nixpkgs";
     };
+    nix-cavemem = {
+      url = "github:pr0d1r2/nix-cavemem";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-lefthook-statix = {
       url = "github:pr0d1r2/nix-lefthook-statix";
       inputs = {
@@ -46,6 +50,7 @@
       nix-lefthook-missing-final-newline,
       nix-lefthook-nix-no-embedded-shell,
       nix-lefthook-trailing-whitespace,
+      nix-cavemem,
       nix-lefthook-statix,
     }:
     let
@@ -86,6 +91,7 @@
               nix-lefthook-nix-no-embedded-shell.packages.${pkgs.stdenv.hostPlatform.system}.default
               nix-lefthook-trailing-whitespace.packages.${pkgs.stdenv.hostPlatform.system}.default
               nix-lefthook-statix.packages.${pkgs.stdenv.hostPlatform.system}.default
+              nix-cavemem.packages.${pkgs.stdenv.hostPlatform.system}.default
               batsWithLibs
               pkgs.coreutils
               pkgs.deadnix
@@ -98,6 +104,7 @@
               pkgs.shellcheck
               pkgs.shfmt
               pkgs.typos
+              pkgs.nodejs
               pkgs.yamllint
             ];
             shellHook = builtins.replaceStrings [ "@BATS_LIB_PATH@" ] [ "${batsWithLibs}" ] (
