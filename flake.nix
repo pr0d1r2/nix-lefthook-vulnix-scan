@@ -65,11 +65,22 @@
     in
     {
       packages = forAllSystems (pkgs: {
-        default = pkgs.writeShellApplication {
-          name = "lefthook-vulnix-scan";
-          runtimeInputs = [ nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.vulnix ];
-          text = builtins.readFile ./lefthook-vulnix-scan.sh;
-        };
+        default =
+          let
+            vulnix =
+              nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.vulnix.overrideAttrs
+                (old: {
+                  postPatch = (old.postPatch or "") + ''
+                    substituteInPlace src/vulnix/nvd.py \
+                      --replace-fail "timeout=10" "timeout=120"
+                  '';
+                });
+          in
+          pkgs.writeShellApplication {
+            name = "lefthook-vulnix-scan";
+            runtimeInputs = [ vulnix ];
+            text = builtins.readFile ./lefthook-vulnix-scan.sh;
+          };
       });
 
       devShells = forAllSystems (
