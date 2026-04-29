@@ -18,10 +18,25 @@ elif [ -f "$system_whitelist" ]; then
     whitelist_args=(--whitelist "$system_whitelist")
 fi
 
+max_retries="${VULNIX_RETRIES:-3}"
+retry_delay="${VULNIX_RETRY_DELAY:-5}"
+
 found=0
 for r in $results; do
     [ -e "$r" ] || continue
-    vulnix "${whitelist_args[@]}" "./$r" || exit 1
+    attempt=1
+    while [ "$attempt" -le "$max_retries" ]; do
+        if vulnix "${whitelist_args[@]}" "./$r"; then
+            break
+        fi
+        if [ "$attempt" -eq "$max_retries" ]; then
+            echo "vulnix-scan: failed after $max_retries attempts for $r" >&2
+            exit 1
+        fi
+        echo "vulnix-scan: attempt $attempt failed, retrying in ${retry_delay}s..." >&2
+        sleep "$retry_delay"
+        attempt=$((attempt + 1))
+    done
     found=1
 done
 
