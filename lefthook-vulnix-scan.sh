@@ -5,6 +5,7 @@
 results="${VULNIX_RESULTS:-result-darwin result}"
 whitelist="${VULNIX_WHITELIST:-.vulnix-whitelist.toml}"
 system_whitelist="${VULNIX_WHITELIST_SYSTEM:-.vulnix-whitelist-system.toml}"
+mirror="${VULNIX_MIRROR:-https://pr0d1r2.github.io/nix-vulnix-nvd-mirror/}"
 
 whitelist_args=()
 [ -f "$whitelist" ] && whitelist_args+=(--whitelist "$whitelist")
@@ -18,7 +19,7 @@ for r in $results; do
     [ -e "$r" ] || continue
     attempt=1
     while [ "$attempt" -le "$max_retries" ]; do
-        if vulnix "${whitelist_args[@]}" "./$r"; then
+        if vulnix --mirror "$mirror" "${whitelist_args[@]}" "./$r"; then
             break
         fi
         if [ "$attempt" -eq "$max_retries" ]; then
