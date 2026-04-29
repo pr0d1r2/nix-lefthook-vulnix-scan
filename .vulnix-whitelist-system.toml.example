@@ -1,0 +1,37 @@
+# System/CI profile whitelist (copy to .vulnix-whitelist-system.toml)
+# Upstream nixpkgs CVEs — false positives or awaiting backport
+
+# Build toolchain
+["binutils-2.44"]
+["binutils-2.46"]
+["gcc-4.6.4"]
+["gcc-10.4.0"]
+["gcc-14.3.0"]
+["gcc-15.2.0"]
+
+# Core system libraries
+["glibc-2.40-218"]
+["glibc-2.42"]
+["glibc-2.42-61"]
+["zlib-1.3.1"]
+
+# Compression
+["gzip-1.2.4"]
+["xz-5.4.7"]
+["xz-5.8.1"]
+["xz-5.8.2"]
+
+# Languages and runtimes
+["cargo-1.94.1"]
+["python-3.14.2"]
+
+# System utilities
+["busybox-1.37.0"]
+["sqlite-3.50.4"]
+
+# Libraries
+["libmicrohttpd-1.0.2"]
+
+# SCM vendor deps
+["mercurial-7.1.2-vendor"]
+["mercurial-7.1.2-vendor-staging"]
