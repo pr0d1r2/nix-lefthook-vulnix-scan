@@ -11,7 +11,7 @@ whitelist_args=()
 [ -f "$system_whitelist" ] && whitelist_args+=(--whitelist "$system_whitelist")
 
 max_retries="${VULNIX_RETRIES:-3}"
-retry_delay="${VULNIX_RETRY_DELAY:-30}"
+base_delay="${VULNIX_RETRY_DELAY:-15}"
 
 found=0
 for r in $results; do
@@ -25,8 +25,9 @@ for r in $results; do
             echo "vulnix-scan: failed after $max_retries attempts for $r" >&2
             exit 1
         fi
-        echo "vulnix-scan: attempt $attempt failed, retrying in ${retry_delay}s..." >&2
-        sleep "$retry_delay"
+        delay=$((base_delay * (2 ** (attempt - 1))))
+        echo "vulnix-scan: attempt $attempt failed, retrying in ${delay}s..." >&2
+        sleep "$delay"
         attempt=$((attempt + 1))
     done
     found=1
