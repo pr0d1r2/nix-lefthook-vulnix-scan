@@ -7,19 +7,11 @@ whitelist="${VULNIX_WHITELIST:-.vulnix-whitelist.toml}"
 system_whitelist="${VULNIX_WHITELIST_SYSTEM:-.vulnix-whitelist-system.toml}"
 
 whitelist_args=()
-if [ -f "$whitelist" ] && [ -f "$system_whitelist" ]; then
-    merged=$(mktemp)
-    trap 'rm -f "$merged"' EXIT
-    cat "$whitelist" "$system_whitelist" >"$merged"
-    whitelist_args=(--whitelist "$merged")
-elif [ -f "$whitelist" ]; then
-    whitelist_args=(--whitelist "$whitelist")
-elif [ -f "$system_whitelist" ]; then
-    whitelist_args=(--whitelist "$system_whitelist")
-fi
+[ -f "$whitelist" ] && whitelist_args+=(--whitelist "$whitelist")
+[ -f "$system_whitelist" ] && whitelist_args+=(--whitelist "$system_whitelist")
 
 max_retries="${VULNIX_RETRIES:-3}"
-retry_delay="${VULNIX_RETRY_DELAY:-5}"
+retry_delay="${VULNIX_RETRY_DELAY:-30}"
 
 found=0
 for r in $results; do
