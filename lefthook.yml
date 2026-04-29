@@ -69,4 +69,4 @@ pre-push:
   parallel: true
   commands:
     vulnix-scan:
-      run: timeout ${LEFTHOOK_VULNIX_SCAN_TIMEOUT:-600} lefthook-vulnix-scan
+      run: timeout ${LEFTHOOK_VULNIX_SCAN_TIMEOUT:-120} lefthook-vulnix-scan

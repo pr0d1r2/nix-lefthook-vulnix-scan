@@ -12,7 +12,7 @@ whitelist_args=()
 [ -f "$system_whitelist" ] && whitelist_args+=(--whitelist "$system_whitelist")
 
 max_retries="${VULNIX_RETRIES:-3}"
-base_delay="${VULNIX_RETRY_DELAY:-15}"
+base_delay="${VULNIX_RETRY_DELAY:-5}"
 
 found=0
 for r in $results; do
