@@ -17,12 +17,6 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-      - name: Cache vulnix NVD database
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/vulnix
-          key: vulnix-nvd-${{ runner.os }}-${{ hashFiles('.vulnix-whitelist.toml') }}
-          restore-keys: vulnix-nvd-${{ runner.os }}-
       - name: Build
         run: nix build
       - name: Pre-commit checks
@@ -41,12 +35,6 @@ jobs:
         with:
           extra_nix_config: |
             experimental-features = nix-command flakes
-      - name: Cache vulnix NVD database
-        uses: actions/cache@v4
-        with:
-          path: ~/.cache/vulnix
-          key: vulnix-nvd-${{ runner.os }}-${{ hashFiles('.vulnix-whitelist.toml') }}
-          restore-keys: vulnix-nvd-${{ runner.os }}-
       - name: Build
         run: nix build
       - name: Pre-commit checks
