@@ -30,6 +30,7 @@
 ["sqlite-3.50.4"]
 
 # Libraries
+["libgcrypt-1.11.2"]
 ["libmicrohttpd-1.0.2"]
 
 # SCM vendor deps
