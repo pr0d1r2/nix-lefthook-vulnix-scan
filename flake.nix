@@ -65,47 +65,57 @@
     in
     {
       packages = forAllSystems (pkgs: {
-        default = pkgs.writeShellApplication {
-          name = "lefthook-vulnix-scan";
-          runtimeInputs = [ nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.vulnix ];
-          text = builtins.readFile ./lefthook-vulnix-scan.sh;
-        };
+        default =
+          let
+            inherit (pkgs.stdenv.hostPlatform) system;
+          in
+          pkgs.writeShellApplication {
+            name = "lefthook-vulnix-scan";
+            runtimeInputs = [ nixpkgs-unstable.legacyPackages.${system}.vulnix ];
+            text = builtins.readFile ./lefthook-vulnix-scan.sh;
+          };
       });
 
       devShells = forAllSystems (
         pkgs:
         let
+          inherit (pkgs.stdenv.hostPlatform) system;
           batsWithLibs = pkgs.bats.withLibraries (p: [
             p.bats-support
             p.bats-assert
             p.bats-file
           ]);
+          ciPackages = [
+            self.packages.${system}.default
+            nix-lefthook-git-conflict-markers.packages.${system}.default
+            nix-lefthook-git-no-local-paths.packages.${system}.default
+            nix-lefthook-missing-final-newline.packages.${system}.default
+            nix-lefthook-nix-no-embedded-shell.packages.${system}.default
+            nix-lefthook-trailing-whitespace.packages.${system}.default
+            nix-lefthook-statix.packages.${system}.default
+            batsWithLibs
+            pkgs.coreutils
+            pkgs.deadnix
+            pkgs.editorconfig-checker
+            pkgs.git
+            pkgs.lefthook
+            pkgs.nix
+            pkgs.nixfmt
+            pkgs.parallel
+            pkgs.shellcheck
+            pkgs.shfmt
+            pkgs.typos
+            pkgs.yamllint
+          ];
         in
         {
+          ci = pkgs.mkShell {
+            packages = ciPackages;
+          };
           default = pkgs.mkShell {
-            packages = [
-              self.packages.${pkgs.stdenv.hostPlatform.system}.default
-              nix-lefthook-git-conflict-markers.packages.${pkgs.stdenv.hostPlatform.system}.default
-              nix-lefthook-git-no-local-paths.packages.${pkgs.stdenv.hostPlatform.system}.default
-              nix-lefthook-missing-final-newline.packages.${pkgs.stdenv.hostPlatform.system}.default
-              nix-lefthook-nix-no-embedded-shell.packages.${pkgs.stdenv.hostPlatform.system}.default
-              nix-lefthook-trailing-whitespace.packages.${pkgs.stdenv.hostPlatform.system}.default
-              nix-lefthook-statix.packages.${pkgs.stdenv.hostPlatform.system}.default
-              nix-cavemem.packages.${pkgs.stdenv.hostPlatform.system}.default
-              batsWithLibs
-              pkgs.coreutils
-              pkgs.deadnix
-              pkgs.editorconfig-checker
-              pkgs.git
-              pkgs.lefthook
-              pkgs.nix
-              pkgs.nixfmt
-              pkgs.parallel
-              pkgs.shellcheck
-              pkgs.shfmt
-              pkgs.typos
+            packages = ciPackages ++ [
+              nix-cavemem.packages.${system}.default
               pkgs.nodejs
-              pkgs.yamllint
             ];
             shellHook = builtins.replaceStrings [ "@BATS_LIB_PATH@" ] [ "${batsWithLibs}" ] (
               builtins.readFile ./dev.sh
