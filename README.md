@@ -29,13 +29,32 @@ remotes:
 }
 ```
 
+## NVD Mirror
+
+NVD feeds are served from a [GitHub Pages mirror](https://github.com/pr0d1r2/nix-vulnix-nvd-mirror) to avoid NVD rate limiting. The mirror updates daily and eliminates the need for local NVD cache warming.
+
+Override with `VULNIX_MIRROR` if you run your own mirror.
+
+## Whitelists
+
+- `.vulnix-whitelist.toml` — project-specific whitelist (tracked in git)
+- `.vulnix-whitelist-system.toml` — system/CI whitelist (gitignored, copy from `.vulnix-whitelist-system.toml.example`)
+
+```bash
+cp .vulnix-whitelist-system.toml.example .vulnix-whitelist-system.toml
+```
+
 ## Configuration
 
 | Variable | Default | Description |
 |----------|---------|-------------|
 | `VULNIX_RESULTS` | `result-darwin result` | Space-separated list of result symlinks to scan |
-| `VULNIX_WHITELIST` | `.vulnix-whitelist.toml` | Path to vulnix whitelist file |
-| `LEFTHOOK_VULNIX_SCAN_TIMEOUT` | `120` | Timeout in seconds |
+| `VULNIX_WHITELIST` | `.vulnix-whitelist.toml` | Path to project whitelist file |
+| `VULNIX_WHITELIST_SYSTEM` | `.vulnix-whitelist-system.toml` | Path to system whitelist file |
+| `VULNIX_MIRROR` | `https://pr0d1r2.github.io/nix-vulnix-nvd-mirror/` | NVD feed mirror URL |
+| `VULNIX_RETRIES` | `3` | Number of retry attempts |
+| `VULNIX_RETRY_DELAY` | `5` | Base delay in seconds (exponential backoff) |
+| `LEFTHOOK_VULNIX_SCAN_TIMEOUT` | `120` | Outer timeout in seconds |
 
 ## Development
 
