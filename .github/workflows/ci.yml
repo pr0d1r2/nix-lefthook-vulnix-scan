@@ -21,12 +21,10 @@ jobs:
         run: nix build
       - name: Install lefthook remotes
         run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command lefthook install
-      - name: Pre-commit checks
-        run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-commit --all-files'
       - name: Prepare system whitelist
         run: cp .vulnix-whitelist-system.toml.example .vulnix-whitelist-system.toml
-      - name: Pre-push checks
-        run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command bash -c 'lefthook run pre-push --all-files'
+      - name: Lefthook checks
+        run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-push --all-files'
 
   build-macos:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -41,9 +39,7 @@ jobs:
         run: nix build
       - name: Install lefthook remotes
         run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command lefthook install
-      - name: Pre-commit checks
-        run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-commit --all-files'
       - name: Prepare system whitelist
         run: cp .vulnix-whitelist-system.toml.example .vulnix-whitelist-system.toml
-      - name: Pre-push checks
-        run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command bash -c 'lefthook run pre-push --all-files'
+      - name: Lefthook checks
+        run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-push --all-files'
