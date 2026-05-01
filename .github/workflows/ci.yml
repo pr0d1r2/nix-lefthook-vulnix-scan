@@ -19,6 +19,8 @@ jobs:
             experimental-features = nix-command flakes
       - name: Build
         run: nix build
+      - name: Install lefthook remotes
+        run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command lefthook install
       - name: Pre-commit checks
         run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-commit --all-files'
       - name: Prepare system whitelist
@@ -37,6 +39,8 @@ jobs:
             experimental-features = nix-command flakes
       - name: Build
         run: nix build
+      - name: Install lefthook remotes
+        run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command lefthook install
       - name: Pre-commit checks
         run: TERM=dumb nix develop .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-commit --all-files'
       - name: Prepare system whitelist
