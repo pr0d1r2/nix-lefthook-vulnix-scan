@@ -1,9 +1,18 @@
 {
   description = "Lefthook-compatible vulnix scan";
 
+  nixConfig = {
+    extra-substituters = [ "https://pr0d1r2.cachix.org" ];
+    extra-trusted-public-keys = [ "pr0d1r2.cachix.org-1:NfWjbhgAj41byXhCKiaE+av3Vnphm1fTezHXEGsiQIM=" ];
+  };
+
   inputs = {
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nix-dev-shell-agentic = {
+      url = "github:pr0d1r2/nix-dev-shell-agentic";
+      inputs.nixpkgs.follows = "nixpkgs";
+    };
     nix-lefthook-git-conflict-markers = {
       url = "github:pr0d1r2/nix-lefthook-git-conflict-markers";
       inputs.nixpkgs.follows = "nixpkgs";
@@ -24,10 +33,6 @@
       url = "github:pr0d1r2/nix-lefthook-trailing-whitespace";
       inputs.nixpkgs.follows = "nixpkgs";
     };
-    nix-cavemem = {
-      url = "github:pr0d1r2/nix-cavemem";
-      inputs.nixpkgs.follows = "nixpkgs";
-    };
     nix-lefthook-statix = {
       url = "github:pr0d1r2/nix-lefthook-statix";
       inputs = {
@@ -45,14 +50,9 @@
       self,
       nixpkgs,
       nixpkgs-unstable,
-      nix-lefthook-git-conflict-markers,
-      nix-lefthook-git-no-local-paths,
-      nix-lefthook-missing-final-newline,
-      nix-lefthook-nix-no-embedded-shell,
-      nix-lefthook-trailing-whitespace,
-      nix-cavemem,
-      nix-lefthook-statix,
-    }:
+      nix-dev-shell-agentic,
+      ...
+    }@inputs:
     let
       supportedSystems = [
         "aarch64-darwin"
@@ -80,48 +80,17 @@
         pkgs:
         let
           inherit (pkgs.stdenv.hostPlatform) system;
-          batsWithLibs = pkgs.bats.withLibraries (p: [
-            p.bats-support
-            p.bats-assert
-            p.bats-file
-          ]);
-          ciPackages = [
-            self.packages.${system}.default
-            nix-lefthook-git-conflict-markers.packages.${system}.default
-            nix-lefthook-git-no-local-paths.packages.${system}.default
-            nix-lefthook-missing-final-newline.packages.${system}.default
-            nix-lefthook-nix-no-embedded-shell.packages.${system}.default
-            nix-lefthook-trailing-whitespace.packages.${system}.default
-            nix-lefthook-statix.packages.${system}.default
-            batsWithLibs
-            pkgs.coreutils
-            pkgs.deadnix
-            pkgs.editorconfig-checker
-            pkgs.git
-            pkgs.lefthook
-            pkgs.nix
-            pkgs.nixfmt
-            pkgs.parallel
-            pkgs.shellcheck
-            pkgs.shfmt
-            pkgs.typos
-            pkgs.yamllint
-          ];
-        in
-        {
-          ci = pkgs.mkShell {
-            packages = ciPackages;
-          };
-          default = pkgs.mkShell {
-            packages = ciPackages ++ [
-              nix-cavemem.packages.${system}.default
-              pkgs.nodejs
+          shells = nix-dev-shell-agentic.lib.mkShells {
+            inherit pkgs inputs;
+            ciPackages = [
+              self.packages.${system}.default
             ];
-            shellHook = builtins.replaceStrings [ "@BATS_LIB_PATH@" ] [ "${batsWithLibs}" ] (
+            shellHook = builtins.replaceStrings [ "@BATS_LIB_PATH@" ] [ "${shells.batsWithLibs}" ] (
               builtins.readFile ./dev.sh
             );
           };
-        }
+        in
+        shells
       );
     };
 }
