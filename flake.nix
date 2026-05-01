@@ -10,7 +10,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-dev-shell-agentic = {
-      url = "github:pr0d1r2/nix-dev-shell-agentic/auto-discover-lefthook-inputs";
+      url = "github:pr0d1r2/nix-dev-shell-agentic";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-lefthook-git-conflict-markers = {
