@@ -10,7 +10,7 @@
     nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-dev-shell-agentic = {
-      url = "github:pr0d1r2/nix-dev-shell-agentic";
+      url = "github:pr0d1r2/nix-dev-shell-agentic/auto-discover-lefthook-inputs";
       inputs.nixpkgs.follows = "nixpkgs";
     };
     nix-lefthook-git-conflict-markers = {
@@ -51,13 +51,8 @@
       nixpkgs,
       nixpkgs-unstable,
       nix-dev-shell-agentic,
-      nix-lefthook-git-conflict-markers,
-      nix-lefthook-git-no-local-paths,
-      nix-lefthook-missing-final-newline,
-      nix-lefthook-nix-no-embedded-shell,
-      nix-lefthook-trailing-whitespace,
-      nix-lefthook-statix,
-    }:
+      ...
+    }@inputs:
     let
       supportedSystems = [
         "aarch64-darwin"
@@ -85,40 +80,17 @@
         pkgs:
         let
           inherit (pkgs.stdenv.hostPlatform) system;
-          batsWithLibs = pkgs.bats.withLibraries (p: [
-            p.bats-support
-            p.bats-assert
-            p.bats-file
-          ]);
+          shells = nix-dev-shell-agentic.lib.mkShells {
+            inherit pkgs inputs;
+            ciPackages = [
+              self.packages.${system}.default
+            ];
+            shellHook = builtins.replaceStrings [ "@BATS_LIB_PATH@" ] [ "${shells.batsWithLibs}" ] (
+              builtins.readFile ./dev.sh
+            );
+          };
         in
-        nix-dev-shell-agentic.lib.mkShells {
-          inherit pkgs;
-          ciPackages = [
-            self.packages.${system}.default
-            nix-lefthook-git-conflict-markers.packages.${system}.default
-            nix-lefthook-git-no-local-paths.packages.${system}.default
-            nix-lefthook-missing-final-newline.packages.${system}.default
-            nix-lefthook-nix-no-embedded-shell.packages.${system}.default
-            nix-lefthook-trailing-whitespace.packages.${system}.default
-            nix-lefthook-statix.packages.${system}.default
-            batsWithLibs
-            pkgs.coreutils
-            pkgs.deadnix
-            pkgs.editorconfig-checker
-            pkgs.git
-            pkgs.lefthook
-            pkgs.nix
-            pkgs.nixfmt
-            pkgs.parallel
-            pkgs.shellcheck
-            pkgs.shfmt
-            pkgs.typos
-            pkgs.yamllint
-          ];
-          shellHook = builtins.replaceStrings [ "@BATS_LIB_PATH@" ] [ "${batsWithLibs}" ] (
-            builtins.readFile ./dev.sh
-          );
-        }
+        shells
       );
     };
 }
