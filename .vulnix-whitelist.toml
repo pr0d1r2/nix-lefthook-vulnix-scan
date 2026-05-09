@@ -64,6 +64,12 @@
 ["perl-5.40.0"]
 ["perl-5.42.0"]
 
+# False positives: CVE misattributed to wrong product
+["ed-1.22.2"]
+["ed-1.22.5"]
+["flex-2.6.4"]
+["void-0.7.3"]
+
 # Build-time deps with known CVEs (not in runtime closure)
 ["fontforge-20251009"]
 ["giflib-5.2.2"]
