@@ -1,5 +1,4 @@
 result
 result-*
 .direnv
-flake.lock
 .vulnix-whitelist-system.toml
