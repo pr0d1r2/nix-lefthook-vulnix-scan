@@ -21,6 +21,8 @@ jobs:
         run: nix build --accept-flake-config
       - name: Prepare system whitelist
         run: cp .vulnix-whitelist-system.toml.example .vulnix-whitelist-system.toml
+      - name: Install lefthook remotes
+        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command lefthook install
       - name: Pre-commit checks
         run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'lefthook run pre-commit --all-files'
       - name: Pre-push checks
@@ -39,6 +41,8 @@ jobs:
         run: nix build --accept-flake-config
       - name: Prepare system whitelist
         run: cp .vulnix-whitelist-system.toml.example .vulnix-whitelist-system.toml
+      - name: Install lefthook remotes
+        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command lefthook install
       - name: Pre-commit checks
         run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'lefthook run pre-commit --all-files'
       - name: Pre-push checks
