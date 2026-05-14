@@ -24,9 +24,9 @@ jobs:
       - name: Install lefthook remotes
         run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command lefthook install
       - name: Pre-commit checks
-        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-commit --all-files'
+        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=60 lefthook run pre-commit --all-files'
       - name: Pre-push checks
-        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-push --all-files'
+        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=60 lefthook run pre-push --all-files'
 
   build-macos:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
@@ -44,6 +44,6 @@ jobs:
       - name: Install lefthook remotes
         run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command lefthook install
       - name: Pre-commit checks
-        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-commit --all-files'
+        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=120 lefthook run pre-commit --all-files'
       - name: Pre-push checks
-        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=300 lefthook run pre-push --all-files'
+        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=120 lefthook run pre-push --all-files'
