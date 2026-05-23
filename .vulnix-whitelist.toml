@@ -75,6 +75,8 @@
 ["curl-8.19.0"]
 # libxml2 2.15.1: CVE-2026-6732 (6.5)
 ["libxml2-2.15.1"]
+# gnulib 0a01f67: CVE-2017-7476 (9.8), build-time dep
+["gnulib-0a01f67"]
 # unbound 1.24.2: 10 CVEs (highest 10.0), awaiting nixpkgs bump
 ["unbound-1.24.2"]
 
