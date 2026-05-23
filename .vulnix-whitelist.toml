@@ -70,6 +70,12 @@
 ["flex-2.6.4"]
 ["void-0.7.3"]
 
+# Real CVEs, core nixpkgs deps -- awaiting upstream fix
+# libxml2 2.15.1: CVE-2026-6732 (6.5)
+["libxml2-2.15.1"]
+# unbound 1.24.2: 10 CVEs (highest 10.0), awaiting nixpkgs bump
+["unbound-1.24.2"]
+
 # Build-time deps with known CVEs (not in runtime closure)
 ["fontforge-20251009"]
 ["giflib-5.2.2"]
