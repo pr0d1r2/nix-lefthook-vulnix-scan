@@ -13,37 +13,11 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: cachix/install-nix-action@v31
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-      - name: Build
-        run: nix build --accept-flake-config
-      - name: Prepare system whitelist
-        run: cp .vulnix-whitelist-system.toml.example .vulnix-whitelist-system.toml
-      - name: Install lefthook remotes
-        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command lefthook install
-      - name: Pre-commit checks
-        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=60 lefthook run pre-commit --all-files'
-      - name: Pre-push checks
-        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=60 lefthook run pre-push --all-files'
+      - uses: pr0d1r2/nix-lefthook-ci-action@fc0c391434c5603e8289549b3cc91f922896cc51
 
   build-macos:
     if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: macos-latest
     steps:
       - uses: actions/checkout@v6
-      - uses: cachix/install-nix-action@v31
-        with:
-          extra_nix_config: |
-            experimental-features = nix-command flakes
-      - name: Build
-        run: nix build --accept-flake-config
-      - name: Prepare system whitelist
-        run: cp .vulnix-whitelist-system.toml.example .vulnix-whitelist-system.toml
-      - name: Install lefthook remotes
-        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command lefthook install
-      - name: Pre-commit checks
-        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=120 lefthook run pre-commit --all-files'
-      - name: Pre-push checks
-        run: TERM=dumb nix develop --accept-flake-config .#ci --ignore-environment --keep TERM --command bash -c 'LEFTHOOK_NIX_FLAKE_CHECK_TIMEOUT=120 lefthook run pre-push --all-files'
+      - uses: pr0d1r2/nix-lefthook-ci-action@fc0c391434c5603e8289549b3cc91f922896cc51
