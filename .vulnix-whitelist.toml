@@ -34,6 +34,8 @@
 ["lua-5.2.4"]
 ["mercurial-7.1"]
 ["mercurial-7.1.2"]
+["mercurial-7.1.2-vendor"]
+["mercurial-7.1.2-vendor-staging"]
 ["ninja-1.13.1"]
 ["ninja-1.13.2"]
 ["rubygems-3.7.2"]
@@ -79,6 +81,43 @@
 ["gnulib-0a01f67"]
 # unbound 1.24.2: 10 CVEs (highest 10.0), awaiting nixpkgs bump
 ["unbound-1.24.2"]
+# binutils 2.44/2.46: CVE-2026-6846 (7.8) + others, awaiting nixpkgs bump
+["binutils-2.44"]
+["binutils-2.46"]
+# busybox 1.37.0: CVE-2025-60876 (6.5), CVE-2025-46394 (3.2)
+["busybox-1.37.0"]
+# cargo 1.94.1: 4 CVEs (highest 6.1), awaiting rust bump
+["cargo-1.94.1"]
+# gcc: CVE-2023-4039 (4.8) affects all versions, CVE-2021-37322 (7.8) for 4.6.4
+["gcc-4.6.4"]
+["gcc-10.4.0"]
+["gcc-14.3.0"]
+["gcc-15.2.0"]
+# glibc: CVE-2026-5450 (9.8) + 9 others, awaiting nixpkgs bump
+["glibc-2.40-224"]
+["glibc-2.42"]
+["glibc-2.42-61"]
+# gzip 1.2.4: CVE-2022-1271 (8.8), old CVE still flagged
+["gzip-1.2.4"]
+# libgcrypt 1.11.2: CVE-2026-41989 (6.7)
+["libgcrypt-1.11.2"]
+# libmicrohttpd 1.0.2: 2 CVEs (highest 7.5)
+["libmicrohttpd-1.0.2"]
+# libssh2 1.11.1: CVE-2026-7598 (7.3)
+["libssh2-1.11.1"]
+# ngtcp2 1.22.0: CVE-2026-40170 (7.5)
+["ngtcp2-1.22.0"]
+# python 3.14.2: CVE-2024-49050 (8.8) + 3 others
+["python-3.14.2"]
+# rsync 3.4.1: 7 CVEs (highest 8.1)
+["rsync-3.4.1"]
+# sqlite 3.50.4: CVE-2025-70873 (7.5)
+["sqlite-3.50.4"]
+# xz: CVE-2026-34743 (5.3)
+["xz-5.4.7"]
+["xz-5.8.2"]
+# zlib 1.3.1: CVE-2026-27820 (9.8) + 3 others
+["zlib-1.3.1"]
 
 # Build-time deps with known CVEs (not in runtime closure)
 ["fontforge-20251009"]
