@@ -26,8 +26,10 @@
 ["curl-0.4.46"]
 ["dash-0.5.13.1"]
 ["dash-0.5.13.2"]
+["dash-0.5.13.3"]
 ["git-2.51.2"]
 ["git-2.53.0"]
+["git-2.54.0"]
 ["go-1.26.2"]
 ["idna-0.5.0"]
 ["lapack-3"]
@@ -75,8 +77,9 @@
 # Real CVEs, core nixpkgs deps -- awaiting upstream fix
 # curl 8.19.0: 8 CVEs (highest 7.5), awaiting nixpkgs bump
 ["curl-8.19.0"]
-# libxml2 2.15.1: CVE-2026-6732 (6.5)
+# libxml2: CVE-2026-6732 (6.5)
 ["libxml2-2.15.1"]
+["libxml2-2.15.2"]
 # gnulib 0a01f67: CVE-2017-7476 (9.8), build-time dep
 ["gnulib-0a01f67"]
 # unbound 1.24.2: 10 CVEs (highest 10.0), awaiting nixpkgs bump
@@ -86,8 +89,9 @@
 ["binutils-2.46"]
 # busybox 1.37.0: CVE-2025-60876 (6.5), CVE-2025-46394 (3.2)
 ["busybox-1.37.0"]
-# cargo 1.94.1: 4 CVEs (highest 6.1), awaiting rust bump
+# cargo: 4 CVEs (highest 6.1), awaiting rust bump
 ["cargo-1.94.1"]
+["cargo-1.95.0"]
 # gcc: CVE-2023-4039 (4.8) affects all versions, CVE-2021-37322 (7.8) for 4.6.4
 ["gcc-4.6.4"]
 ["gcc-10.4.0"]
@@ -107,8 +111,9 @@
 ["libssh2-1.11.1"]
 # ngtcp2 1.22.0: CVE-2026-40170 (7.5)
 ["ngtcp2-1.22.0"]
-# python 3.14.2: CVE-2024-49050 (8.8) + 3 others
+# python: CVE-2026-7210 (9.8), CVE-2024-49050 (8.8) + others
 ["python-3.14.2"]
+["python-3.14.4"]
 # rsync 3.4.1: 7 CVEs (highest 8.1)
 ["rsync-3.4.1"]
 # sqlite 3.50.4: CVE-2025-70873 (7.5)
