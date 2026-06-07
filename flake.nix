@@ -7,7 +7,8 @@
   };
 
   inputs = {
-    nixpkgs.url = "github:NixOS/nixpkgs/nixos-25.11";
+    nixpkgs-lock.url = "github:pr0d1r2/nixpkgs-lock";
+    nixpkgs.follows = "nixpkgs-lock/nixpkgs";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
     nix-dev-shell-agentic = {
       url = "github:pr0d1r2/nix-dev-shell-agentic";
