@@ -241,6 +241,7 @@
               pkgs.git
               pkgs.lefthook
               pkgs.nix
+              pkgs.parallel
             ]
             ++ (lefthookWrappersFor pkgs);
             shellHook = builtins.replaceStrings [ "@BATS_LIB_PATH@" ] [ "${batsWithLibs}" ] (
