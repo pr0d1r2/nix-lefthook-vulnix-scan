@@ -109,7 +109,8 @@
 ["libmicrohttpd-1.0.2"]
 # libssh2 1.11.1: CVE-2026-7598 (7.3)
 ["libssh2-1.11.1"]
-# ngtcp2 1.22.0: CVE-2026-40170 (7.5)
+# ngtcp2: CVE-2026-40170 (7.5)
+["ngtcp2-1.17.0"]
 ["ngtcp2-1.22.0"]
 # python: CVE-2026-7210 (9.8), CVE-2024-49050 (8.8) + others
 ["python-3.14.2"]

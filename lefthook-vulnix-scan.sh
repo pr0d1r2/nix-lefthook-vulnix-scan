@@ -16,24 +16,24 @@ base_delay="${VULNIX_RETRY_DELAY:-5}"
 
 found=0
 for r in $results; do
-    [ -e "$r" ] || continue
-    attempt=1
-    while [ "$attempt" -le "$max_retries" ]; do
-        if vulnix --mirror "$mirror" "${whitelist_args[@]}" "./$r"; then
-            break
-        fi
-        if [ "$attempt" -eq "$max_retries" ]; then
-            echo "vulnix-scan: failed after $max_retries attempts for $r" >&2
-            exit 1
-        fi
-        delay=$((base_delay * (2 ** (attempt - 1))))
-        echo "vulnix-scan: attempt $attempt failed, retrying in ${delay}s..." >&2
-        sleep "$delay"
-        attempt=$((attempt + 1))
-    done
-    found=1
+  [ -e "$r" ] || continue
+  attempt=1
+  while [ "$attempt" -le "$max_retries" ]; do
+    if vulnix --mirror "$mirror" "${whitelist_args[@]}" "./$r"; then
+      break
+    fi
+    if [ "$attempt" -eq "$max_retries" ]; then
+      echo "vulnix-scan: failed after $max_retries attempts for $r" >&2
+      exit 1
+    fi
+    delay=$((base_delay * (2 ** (attempt - 1))))
+    echo "vulnix-scan: attempt $attempt failed, retrying in ${delay}s..." >&2
+    sleep "$delay"
+    attempt=$((attempt + 1))
+  done
+  found=1
 done
 
 if [ "$found" -eq 0 ]; then
-    echo "vulnix-scan: no result symlinks found, skipping"
+  echo "vulnix-scan: no result symlinks found, skipping"
 fi
