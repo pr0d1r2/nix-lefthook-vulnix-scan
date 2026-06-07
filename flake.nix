@@ -135,6 +135,7 @@
             runtimeInputs = [
               pkgs.bats
               pkgs.coreutils
+              pkgs.parallel
             ];
           })
           (wrap "lefthook-deadnix" nix-lefthook-deadnix-src {
