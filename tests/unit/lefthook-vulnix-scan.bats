@@ -103,6 +103,14 @@ run_script() {
     assert_output --partial "my-system-whitelist.toml"
 }
 
+@test "respects VULNIX_MIRROR env var" {
+    mkdir "$TEST_TEMP/result"
+    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_MIRROR='https://custom-mirror.example.com/' bash '$SCRIPT'"
+    assert_success
+    run cat "$VULNIX_LOG"
+    assert_output --partial "--mirror https://custom-mirror.example.com/"
+}
+
 @test "fails when vulnix exits non-zero" {
     mkdir "$TEST_TEMP/result"
     cat > "$TEST_TEMP/bin/vulnix" <<'SH'
