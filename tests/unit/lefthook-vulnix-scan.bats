@@ -111,6 +111,27 @@ run_script() {
     assert_output --partial "--mirror https://custom-mirror.example.com/"
 }
 
+@test "retries and succeeds when vulnix fails then succeeds" {
+    mkdir "$TEST_TEMP/result"
+    cat > "$TEST_TEMP/bin/vulnix" <<SH
+#!/usr/bin/env bash
+echo "vulnix \$*" >> "$VULNIX_LOG"
+COUNTER_FILE="$TEST_TEMP/vulnix_counter"
+count=0
+[ -f "\$COUNTER_FILE" ] && count=\$(cat "\$COUNTER_FILE")
+count=\$((count + 1))
+echo "\$count" > "\$COUNTER_FILE"
+if [ "\$count" -le 1 ]; then
+  exit 1
+fi
+exit 0
+SH
+    chmod +x "$TEST_TEMP/bin/vulnix"
+    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_RETRIES=2 VULNIX_RETRY_DELAY=0 bash '$SCRIPT'"
+    assert_success
+    assert_output --partial "attempt 1 failed, retrying in 0s"
+}
+
 @test "fails when vulnix exits non-zero" {
     mkdir "$TEST_TEMP/result"
     cat > "$TEST_TEMP/bin/vulnix" <<'SH'
