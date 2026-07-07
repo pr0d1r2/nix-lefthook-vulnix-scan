@@ -66,7 +66,7 @@ environment variables.
 |---|---|---|
 | `flake.nix` | Nix | Flake definition: package, dev shells, lefthook wrappers |
 | `lefthook.yml` | YAML | Local lefthook config with remotes and pre-push vulnix-scan |
-| `lefthook-remote.yml` | YAML | Remote lefthook config (pre-push only) for consumers |
+| `lefthook-remote.yml` | YAML | Remote lefthook config (pre-push only — requires nix build result symlinks) for consumers |
 | `.vulnix-whitelist.toml` | TOML | Project-specific CVE whitelist (tracked) |
 | `.vulnix-whitelist-system.toml` | TOML | System/CI whitelist (gitignored) |
 | `.vulnix-whitelist-system.toml.example` | TOML | Template for system whitelist |
@@ -99,7 +99,7 @@ under `pre-push`.
 | `x` | T5 | Add test for `VULNIX_RETRY_DELAY` env var — currently untested |
 | `x` | T6 | Speed up the "fails when vulnix exits non-zero" test by setting `VULNIX_RETRIES=1` to avoid 15s of retry sleeps |
 | `x` | T7 | Add `watch_file` entries to `.envrc` for `dev.sh` and `flake.nix` so direnv reloads on changes |
-| `.` | T8 | Add `lefthook-remote.yml` to `pre-commit` in addition to `pre-push` (or document why vulnix-scan is pre-push only) |
+| `x` | T8 | Add `lefthook-remote.yml` to `pre-commit` in addition to `pre-push` (or document why vulnix-scan is pre-push only) |
 | `.` | T9 | Add a `markdownlint` lefthook check — markdown files exist but no linter is configured for them in `lefthook.yml` |
 
 ## §B — Bugs / Known Issues
@@ -130,10 +130,9 @@ under `pre-push`.
     prune entries when nixpkgs bumps fix the underlying CVEs, so stale
     entries accumulate silently.
 
-6. **`lefthook-remote.yml` is pre-push only**: The remote config only
-    defines `pre-push`, not `pre-commit`. This is likely intentional
-    (vulnix needs build results), but it is not documented and differs
-    from the project skill rule that all checks should be in both hooks.
+6. ~~**`lefthook-remote.yml` is pre-push only**~~: Documented. The scan
+    requires nix build result symlinks (`result`, `result-darwin`) which
+    are not available at commit time, so `pre-commit` is not applicable.
 
 7. **`markdownlint` not in lefthook**: A `.markdownlint.yml` config exists
     and markdown files are tracked, but there is no `markdownlint` command
