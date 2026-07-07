@@ -35,8 +35,8 @@ either as a flake input or as a remote lefthook configuration.
 14. Lefthook checks use `timeout` to bound execution time.
 15. The `dev.sh` shell hook installs lefthook when `.git/hooks/pre-commit`
     is absent.
-16. Markdown files pass `markdownlint` (line-length disabled via
-    `.markdownlint.yml`).
+16. Markdown files pass `markdownlint` (line-length and first-line-heading
+    disabled via `.markdownlint.yml`).
 
 ## §I — Interfaces
 
@@ -49,7 +49,7 @@ environment variables.
 ### Environment variables
 
 | Variable | Type | Default | Description |
-|---|---|---|---|
+| --- | --- | --- | --- |
 | `VULNIX_RESULTS` | space-separated paths | `result-darwin result` | Build result symlinks to scan |
 | `VULNIX_WHITELIST` | path | `.vulnix-whitelist.toml` | Project whitelist file |
 | `VULNIX_WHITELIST_SYSTEM` | path | `.vulnix-whitelist-system.toml` | System/CI whitelist file |
@@ -63,7 +63,7 @@ environment variables.
 ### Config files
 
 | File | Format | Purpose |
-|---|---|---|
+| --- | --- | --- |
 | `flake.nix` | Nix | Flake definition: package, dev shells, lefthook wrappers |
 | `lefthook.yml` | YAML | Local lefthook config with remotes and pre-push vulnix-scan |
 | `lefthook-remote.yml` | YAML | Remote lefthook config (pre-push only — requires nix build result symlinks) for consumers |
@@ -77,7 +77,7 @@ environment variables.
 ### Flake outputs
 
 | Output | Description |
-|---|---|
+| --- | --- |
 | `packages.<system>.default` | `lefthook-vulnix-scan` wrapped shell application |
 | `devShells.<system>.default` | Dev shell with all linters, bats, lefthook, and vulnix |
 | `devShells.<system>.ci` | Alias for `default` dev shell |
@@ -91,7 +91,7 @@ under `pre-push`.
 ## §T — Tasks
 
 | status | id | goal |
-|---|---|---|
+| --- | --- | --- |
 | `x` | T1 | Add test for `VULNIX_WHITELIST_SYSTEM` env var — currently untested |
 | `x` | T2 | Add test for `VULNIX_MIRROR` env var — currently untested |
 | `x` | T3 | Add test for retry logic (vulnix fails then succeeds on subsequent attempt) |
@@ -100,7 +100,7 @@ under `pre-push`.
 | `x` | T6 | Speed up the "fails when vulnix exits non-zero" test by setting `VULNIX_RETRIES=1` to avoid 15s of retry sleeps |
 | `x` | T7 | Add `watch_file` entries to `.envrc` for `dev.sh` and `flake.nix` so direnv reloads on changes |
 | `x` | T8 | Add `lefthook-remote.yml` to `pre-commit` in addition to `pre-push` (or document why vulnix-scan is pre-push only) |
-| `.` | T9 | Add a `markdownlint` lefthook check — markdown files exist but no linter is configured for them in `lefthook.yml` |
+| `x` | T9 | Add a `markdownlint` lefthook check — markdown files exist but no linter is configured for them in `lefthook.yml` |
 
 ## §B — Bugs / Known Issues
 

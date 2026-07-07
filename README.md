@@ -51,7 +51,7 @@ cp .vulnix-whitelist-system.toml.example .vulnix-whitelist-system.toml
 ## Configuration
 
 | Variable | Default | Description |
-|----------|---------|-------------|
+| --- | --- | --- |
 | `VULNIX_RESULTS` | `result-darwin result` | Space-separated list of result symlinks to scan |
 | `VULNIX_WHITELIST` | `.vulnix-whitelist.toml` | Path to project whitelist file |
 | `VULNIX_WHITELIST_SYSTEM` | `.vulnix-whitelist-system.toml` | Path to system whitelist file |
