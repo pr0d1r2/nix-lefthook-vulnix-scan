@@ -62,8 +62,9 @@
 # Real CVEs, core deps -- backport causes massive rebuild cascades
 # jq 1.8.1: 4 CVEs (highest 8.2), fix in 1.8.2
 ["jq-1.8.1"]
-# openssl 3.6.1: 7 CVEs (highest 9.8), fix in 3.6.2
+# openssl 3.6.x: CVE-2026-45447 (8.8) + prior CVEs, awaiting nixpkgs bump
 ["openssl-3.6.1"]
+["openssl-3.6.2"]
 # perl: CVE-2026-4176 (9.8), heap overflow in Compress::Raw::Zlib
 ["perl-5.40.0"]
 ["perl-5.42.0"]
