@@ -111,6 +111,18 @@ run_script() {
     assert_output --partial "--mirror https://custom-mirror.example.com/"
 }
 
+@test "respects VULNIX_RETRIES env var" {
+    mkdir "$TEST_TEMP/result"
+    cat > "$TEST_TEMP/bin/vulnix" <<'SH'
+#!/usr/bin/env bash
+exit 1
+SH
+    chmod +x "$TEST_TEMP/bin/vulnix"
+    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_RETRIES=2 VULNIX_RETRY_DELAY=0 bash '$SCRIPT'"
+    assert_failure
+    assert_output --partial "failed after 2 attempts"
+}
+
 @test "retries and succeeds when vulnix fails then succeeds" {
     mkdir "$TEST_TEMP/result"
     cat > "$TEST_TEMP/bin/vulnix" <<SH
