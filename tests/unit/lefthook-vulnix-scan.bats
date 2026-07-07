@@ -123,6 +123,27 @@ SH
     assert_output --partial "failed after 2 attempts"
 }
 
+@test "respects VULNIX_RETRY_DELAY env var" {
+    mkdir "$TEST_TEMP/result"
+    cat > "$TEST_TEMP/bin/vulnix" <<SH
+#!/usr/bin/env bash
+echo "vulnix \$*" >> "$VULNIX_LOG"
+COUNTER_FILE="$TEST_TEMP/vulnix_counter"
+count=0
+[ -f "\$COUNTER_FILE" ] && count=\$(cat "\$COUNTER_FILE")
+count=\$((count + 1))
+echo "\$count" > "\$COUNTER_FILE"
+if [ "\$count" -le 1 ]; then
+  exit 1
+fi
+exit 0
+SH
+    chmod +x "$TEST_TEMP/bin/vulnix"
+    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_RETRIES=2 VULNIX_RETRY_DELAY=1 bash '$SCRIPT'"
+    assert_success
+    assert_output --partial "retrying in 1s"
+}
+
 @test "retries and succeeds when vulnix fails then succeeds" {
     mkdir "$TEST_TEMP/result"
     cat > "$TEST_TEMP/bin/vulnix" <<SH
@@ -151,6 +172,7 @@ SH
 exit 1
 SH
     chmod +x "$TEST_TEMP/bin/vulnix"
+    export VULNIX_RETRIES=1
     run run_script
     assert_failure
 }
