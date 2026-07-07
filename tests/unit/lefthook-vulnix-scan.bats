@@ -94,6 +94,15 @@ run_script() {
     assert_output --partial "my-whitelist.toml"
 }
 
+@test "respects VULNIX_WHITELIST_SYSTEM env var" {
+    mkdir "$TEST_TEMP/result"
+    touch "$TEST_TEMP/my-system-whitelist.toml"
+    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_WHITELIST_SYSTEM='my-system-whitelist.toml' bash '$SCRIPT'"
+    assert_success
+    run cat "$VULNIX_LOG"
+    assert_output --partial "my-system-whitelist.toml"
+}
+
 @test "fails when vulnix exits non-zero" {
     mkdir "$TEST_TEMP/result"
     cat > "$TEST_TEMP/bin/vulnix" <<'SH'

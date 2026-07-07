@@ -92,7 +92,7 @@ under `pre-push`.
 
 | status | id | goal |
 |---|---|---|
-| `.` | T1 | Add test for `VULNIX_WHITELIST_SYSTEM` env var — currently untested |
+| `x` | T1 | Add test for `VULNIX_WHITELIST_SYSTEM` env var — currently untested |
 | `.` | T2 | Add test for `VULNIX_MIRROR` env var — currently untested |
 | `.` | T3 | Add test for retry logic (vulnix fails then succeeds on subsequent attempt) |
 | `.` | T4 | Add test for `VULNIX_RETRIES` env var — currently untested |
