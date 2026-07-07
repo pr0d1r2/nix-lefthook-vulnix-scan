@@ -72,6 +72,8 @@ remotes:
     configs:
       - lefthook-remote.yml
 
+# vulnix-scan is pre-push only: it requires nix build result symlinks
+# (result, result-darwin) which are not available at commit time.
 pre-push:
   parallel: true
   commands:

@@ -10,6 +10,10 @@ Scans nix build result symlinks (`result-darwin`, `result`) for known CVEs using
 
 ### As a remote lefthook configuration
 
+The remote config registers vulnix-scan under `pre-push` only. It is not
+available as a `pre-commit` hook because the scan requires nix build result
+symlinks (`result`, `result-darwin`) which are not available at commit time.
+
 ```yaml
 remotes:
   - git_url: https://github.com/pr0d1r2/nix-lefthook-vulnix-scan

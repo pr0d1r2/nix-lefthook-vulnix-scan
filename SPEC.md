@@ -66,7 +66,7 @@ environment variables.
 |---|---|---|
 | `flake.nix` | Nix | Flake definition: package, dev shells, lefthook wrappers |
 | `lefthook.yml` | YAML | Local lefthook config with remotes and pre-push vulnix-scan |
-| `lefthook-remote.yml` | YAML | Remote lefthook config (pre-push only) for consumers |
+| `lefthook-remote.yml` | YAML | Remote lefthook config (pre-push only — requires nix build result symlinks) for consumers |
 | `.vulnix-whitelist.toml` | TOML | Project-specific CVE whitelist (tracked) |
 | `.vulnix-whitelist-system.toml` | TOML | System/CI whitelist (gitignored) |
 | `.vulnix-whitelist-system.toml.example` | TOML | Template for system whitelist |
@@ -99,30 +99,23 @@ under `pre-push`.
 | `x` | T5 | Add test for `VULNIX_RETRY_DELAY` env var — currently untested |
 | `x` | T6 | Speed up the "fails when vulnix exits non-zero" test by setting `VULNIX_RETRIES=1` to avoid 15s of retry sleeps |
 | `x` | T7 | Add `watch_file` entries to `.envrc` for `dev.sh` and `flake.nix` so direnv reloads on changes |
-| `.` | T8 | Add `lefthook-remote.yml` to `pre-commit` in addition to `pre-push` (or document why vulnix-scan is pre-push only) |
+| `x` | T8 | Add `lefthook-remote.yml` to `pre-commit` in addition to `pre-push` (or document why vulnix-scan is pre-push only) |
 | `.` | T9 | Add a `markdownlint` lefthook check — markdown files exist but no linter is configured for them in `lefthook.yml` |
 
 ## §B — Bugs / Known Issues
 
-1. **Slow failure test**: The `@test "fails when vulnix exits non-zero"`
-    test in `lefthook-vulnix-scan.bats` does not override `VULNIX_RETRIES`.
-    With the default of 3 retries and exponential backoff (5s + 10s), the
-    test waits ~15 seconds before failing. Setting `VULNIX_RETRIES=1` would
-    make it instant.
+1. ~~**Slow failure test**~~: Fixed. The test now sets `VULNIX_RETRIES=1`
+    to avoid retry delays.
 
-2. **Missing env var test coverage**: The variables `VULNIX_WHITELIST_SYSTEM`,
-    `VULNIX_MIRROR`, `VULNIX_RETRIES`, and `VULNIX_RETRY_DELAY` are
-    implemented in `lefthook-vulnix-scan.sh` but have no corresponding
-    bats tests.
+2. ~~**Missing env var test coverage**~~: Fixed. Tests for
+    `VULNIX_WHITELIST_SYSTEM`, `VULNIX_MIRROR`, `VULNIX_RETRIES`, and
+    `VULNIX_RETRY_DELAY` added.
 
-3. **No retry-success test**: There is no test verifying that the retry
-    logic actually works (i.e., vulnix fails on attempt 1 but succeeds on
-    attempt 2). The only failure test always exits non-zero.
+3. ~~**No retry-success test**~~: Fixed. Test "retries and succeeds when
+    vulnix fails then succeeds" covers the retry-then-pass path.
 
-4. **`.envrc` does not watch dependencies**: The `.envrc` file contains
-    only `use flake` and does not `watch_file` for `dev.sh`, `flake.nix`,
-    or `flake.lock`. Changes to these files may not trigger a direnv
-    reload.
+4. ~~**`.envrc` does not watch dependencies**~~: Fixed. `.envrc` now has
+    `watch_file` entries for `dev.sh` and `flake.nix`.
 
 5. **Whitelist maintenance burden**: The `.vulnix-whitelist.toml` file
     contains 130+ entries mixing false positives with real CVEs that are
@@ -130,10 +123,9 @@ under `pre-push`.
     prune entries when nixpkgs bumps fix the underlying CVEs, so stale
     entries accumulate silently.
 
-6. **`lefthook-remote.yml` is pre-push only**: The remote config only
-    defines `pre-push`, not `pre-commit`. This is likely intentional
-    (vulnix needs build results), but it is not documented and differs
-    from the project skill rule that all checks should be in both hooks.
+6. ~~**`lefthook-remote.yml` is pre-push only**~~: Documented. The scan
+    requires nix build result symlinks (`result`, `result-darwin`) which
+    are not available at commit time, so `pre-commit` is not applicable.
 
 7. **`markdownlint` not in lefthook**: A `.markdownlint.yml` config exists
     and markdown files are tracked, but there is no `markdownlint` command
@@ -144,8 +136,6 @@ under `pre-push`.
     `.vulnix-whitelist-system.toml.example` are tracked TOML files with no
     corresponding linter in `lefthook.yml`.
 
-9. **SPEC.md editorconfig and file-size failures** (2026-07-07, fixed):
-    Numbered list continuation lines used 3-space indentation violating
-    `.editorconfig` `indent_size = 2`. Also exceeded the default 4096-byte
-    file-size limit for `.md`. Fixed indentation to 4 spaces and added
-    `md: 10240` to `config/lefthook/file_size_limits.yml`.
+9. ~~**SPEC.md editorconfig and file-size failures**~~: Fixed.
+    Indentation corrected to 4 spaces and `md: 10240` added to
+    `config/lefthook/file_size_limits.yml`.
