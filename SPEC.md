@@ -95,7 +95,7 @@ under `pre-push`.
 | `x` | T1 | Add test for `VULNIX_WHITELIST_SYSTEM` env var — currently untested |
 | `x` | T2 | Add test for `VULNIX_MIRROR` env var — currently untested |
 | `x` | T3 | Add test for retry logic (vulnix fails then succeeds on subsequent attempt) |
-| `.` | T4 | Add test for `VULNIX_RETRIES` env var — currently untested |
+| `x` | T4 | Add test for `VULNIX_RETRIES` env var — currently untested |
 | `.` | T5 | Add test for `VULNIX_RETRY_DELAY` env var — currently untested |
 | `.` | T6 | Speed up the "fails when vulnix exits non-zero" test by setting `VULNIX_RETRIES=1` to avoid 15s of retry sleeps |
 | `.` | T7 | Add `watch_file` entries to `.envrc` for `dev.sh` and `flake.nix` so direnv reloads on changes |
