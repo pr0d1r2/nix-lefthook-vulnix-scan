@@ -76,7 +76,7 @@ pre-commit:
   parallel: true
   commands:
     markdownlint:
-      glob: "*.md"
+      glob: "**/*.md"
       run: timeout 30 markdownlint {staged_files}
 
 # vulnix-scan is pre-push only: it requires nix build result symlinks
@@ -85,7 +85,7 @@ pre-push:
   parallel: true
   commands:
     markdownlint:
-      glob: "*.md"
+      glob: "**/*.md"
       run: timeout 30 markdownlint {all_files}
     vulnix-scan:
       run: timeout ${LEFTHOOK_VULNIX_SCAN_TIMEOUT:-120} lefthook-vulnix-scan
