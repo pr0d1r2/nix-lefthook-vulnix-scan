@@ -172,6 +172,7 @@ SH
 exit 1
 SH
     chmod +x "$TEST_TEMP/bin/vulnix"
+    export VULNIX_RETRIES=1
     run run_script
     assert_failure
 }
