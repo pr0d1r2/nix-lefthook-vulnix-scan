@@ -12,19 +12,19 @@ either as a flake input or as a remote lefthook configuration.
 ## §V — Invariants
 
 1. The flake must evaluate and build on all four supported systems:
-   `aarch64-darwin`, `x86_64-darwin`, `x86_64-linux`, `aarch64-linux`.
+    `aarch64-darwin`, `x86_64-darwin`, `x86_64-linux`, `aarch64-linux`.
 2. CI runs on both `ubuntu-latest` and `macos-latest` via the
-   `nix-lefthook-ci-action`.
+    `nix-lefthook-ci-action`.
 3. All shell scripts pass `shellcheck` and `shfmt`.
 4. All Nix files pass `statix`, `deadnix`, `nixfmt`, and the
-   no-embedded-shell check.
+    no-embedded-shell check.
 5. All YAML files pass `yamllint` (`.yamllint.yml` config).
 6. All files pass `editorconfig-checker` (`.editorconfig` config).
 7. All files end with a final newline, have no trailing whitespace, and
-   contain no git conflict markers.
+    contain no git conflict markers.
 8. No tracked file exceeds the size limits in
-   `config/lefthook/file_size_limits.yml` (default 4096 bytes; `.lock`
-   65536; `.nix` 10240).
+    `config/lefthook/file_size_limits.yml` (default 4096 bytes; `.lock`
+    65536; `.nix` 10240; `.md` 10240).
 9. Nix files do not contain local filesystem paths (`git-no-local-paths`).
 10. Shell scripts must not embed functions — separate scripts are used
     instead.
@@ -105,41 +105,47 @@ under `pre-push`.
 ## §B — Bugs / Known Issues
 
 1. **Slow failure test**: The `@test "fails when vulnix exits non-zero"`
-   test in `lefthook-vulnix-scan.bats` does not override `VULNIX_RETRIES`.
-   With the default of 3 retries and exponential backoff (5s + 10s), the
-   test waits ~15 seconds before failing. Setting `VULNIX_RETRIES=1` would
-   make it instant.
+    test in `lefthook-vulnix-scan.bats` does not override `VULNIX_RETRIES`.
+    With the default of 3 retries and exponential backoff (5s + 10s), the
+    test waits ~15 seconds before failing. Setting `VULNIX_RETRIES=1` would
+    make it instant.
 
 2. **Missing env var test coverage**: The variables `VULNIX_WHITELIST_SYSTEM`,
-   `VULNIX_MIRROR`, `VULNIX_RETRIES`, and `VULNIX_RETRY_DELAY` are
-   implemented in `lefthook-vulnix-scan.sh` but have no corresponding
-   bats tests.
+    `VULNIX_MIRROR`, `VULNIX_RETRIES`, and `VULNIX_RETRY_DELAY` are
+    implemented in `lefthook-vulnix-scan.sh` but have no corresponding
+    bats tests.
 
 3. **No retry-success test**: There is no test verifying that the retry
-   logic actually works (i.e., vulnix fails on attempt 1 but succeeds on
-   attempt 2). The only failure test always exits non-zero.
+    logic actually works (i.e., vulnix fails on attempt 1 but succeeds on
+    attempt 2). The only failure test always exits non-zero.
 
 4. **`.envrc` does not watch dependencies**: The `.envrc` file contains
-   only `use flake` and does not `watch_file` for `dev.sh`, `flake.nix`,
-   or `flake.lock`. Changes to these files may not trigger a direnv
-   reload.
+    only `use flake` and does not `watch_file` for `dev.sh`, `flake.nix`,
+    or `flake.lock`. Changes to these files may not trigger a direnv
+    reload.
 
 5. **Whitelist maintenance burden**: The `.vulnix-whitelist.toml` file
-   contains 130+ entries mixing false positives with real CVEs that are
-   whitelisted due to rebuild cost. There is no automated mechanism to
-   prune entries when nixpkgs bumps fix the underlying CVEs, so stale
-   entries accumulate silently.
+    contains 130+ entries mixing false positives with real CVEs that are
+    whitelisted due to rebuild cost. There is no automated mechanism to
+    prune entries when nixpkgs bumps fix the underlying CVEs, so stale
+    entries accumulate silently.
 
 6. **`lefthook-remote.yml` is pre-push only**: The remote config only
-   defines `pre-push`, not `pre-commit`. This is likely intentional
-   (vulnix needs build results), but it is not documented and differs
-   from the project skill rule that all checks should be in both hooks.
+    defines `pre-push`, not `pre-commit`. This is likely intentional
+    (vulnix needs build results), but it is not documented and differs
+    from the project skill rule that all checks should be in both hooks.
 
 7. **`markdownlint` not in lefthook**: A `.markdownlint.yml` config exists
-   and markdown files are tracked, but there is no `markdownlint` command
-   in `lefthook.yml`. Per the linter skill, every tracked file type needs
-   a lefthook linter.
+    and markdown files are tracked, but there is no `markdownlint` command
+    in `lefthook.yml`. Per the linter skill, every tracked file type needs
+    a lefthook linter.
 
 8. **TOML files have no linter**: `.vulnix-whitelist.toml` and
-   `.vulnix-whitelist-system.toml.example` are tracked TOML files with no
-   corresponding linter in `lefthook.yml`.
+    `.vulnix-whitelist-system.toml.example` are tracked TOML files with no
+    corresponding linter in `lefthook.yml`.
+
+9. **SPEC.md editorconfig and file-size failures** (2026-07-07, fixed):
+    Numbered list continuation lines used 3-space indentation violating
+    `.editorconfig` `indent_size = 2`. Also exceeded the default 4096-byte
+    file-size limit for `.md`. Fixed indentation to 4 spaces and added
+    `md: 10240` to `config/lefthook/file_size_limits.yml`.
