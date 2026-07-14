@@ -139,3 +139,12 @@ under `pre-push`.
 9. ~~**SPEC.md editorconfig and file-size failures**~~: Fixed.
     Indentation corrected to 4 spaces and `md: 10240` added to
     `config/lefthook/file_size_limits.yml`.
+
+10. ~~**Missing markdownlint wrappers break CI**~~: Fixed. `lefthook.yml`
+    referenced `lefthook-markdownlint` and `lefthook-markdownlint-agentic`,
+    but `flake.nix` never provided those wrappers, so CI failed with
+    `timeout: failed to run command 'lefthook-markdownlint': No such file
+    or directory` (exit 127). Added the `nix-lefthook-markdownlint` and
+    `nix-lefthook-markdownlint-agentic` flake inputs and their
+    `writeShellApplication` wrappers (the former also wiring the
+    `is-markdown-agentic` helper).
