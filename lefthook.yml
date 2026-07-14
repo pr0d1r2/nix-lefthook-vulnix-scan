@@ -1,91 +1,29 @@
 ---
-output:
-  - failure
-
-remotes:
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-nixfmt
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-shellcheck
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-shfmt
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-statix
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-deadnix
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-nix-no-embedded-shell
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-bats-parse
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-bats-unit
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-yamllint
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-nix-flake-check
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-typos
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-trailing-whitespace
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-missing-final-newline
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-git-conflict-markers
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-editorconfig-checker
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-git-no-local-paths
-    ref: main
-    configs:
-      - lefthook-remote.yml
-  - git_url: https://github.com/pr0d1r2/nix-lefthook-file-size-check
-    ref: main
-    configs:
-      - lefthook-remote.yml
 
 pre-commit:
-  parallel: true
   commands:
     markdownlint:
-      glob: "**/*.md"
-      run: timeout 30 markdownlint {staged_files}
+      glob: "*.md"
+      exclude: "^(\\.claude/skills/)"
+      run: timeout ${LEFTHOOK_MARKDOWNLINT_TIMEOUT:-30} lefthook-markdownlint {staged_files}
+    markdownlint-agentic:
+      glob: "*.md"
+      exclude: "^(README|CHANGELOG|SPEC|CONTRIBUTING)\\.md$"
+      run: timeout ${LEFTHOOK_MARKDOWNLINT_AGENTIC_TIMEOUT:-30} lefthook-markdownlint-agentic {staged_files}
+    yamllint:
+      glob: "*.{yml,yaml}"
+      run: timeout ${LEFTHOOK_YAMLLINT_TIMEOUT:-30} lefthook-yamllint {staged_files}
 
-# vulnix-scan is pre-push only: it requires nix build result symlinks
-# (result, result-darwin) which are not available at commit time.
 pre-push:
-  parallel: true
   commands:
     markdownlint:
-      glob: "**/*.md"
-      run: timeout 30 markdownlint {all_files}
-    vulnix-scan:
-      run: timeout ${LEFTHOOK_VULNIX_SCAN_TIMEOUT:-120} lefthook-vulnix-scan
+      glob: "*.md"
+      exclude: "^(\\.claude/skills/)"
+      run: timeout ${LEFTHOOK_MARKDOWNLINT_TIMEOUT:-30} lefthook-markdownlint {push_files}
+    markdownlint-agentic:
+      glob: "*.md"
+      exclude: "^(README|CHANGELOG|SPEC|CONTRIBUTING)\\.md$"
+      run: timeout ${LEFTHOOK_MARKDOWNLINT_AGENTIC_TIMEOUT:-30} lefthook-markdownlint-agentic {push_files}
+    yamllint:
+      glob: "*.{yml,yaml}"
+      run: timeout ${LEFTHOOK_YAMLLINT_TIMEOUT:-30} lefthook-yamllint {push_files}
