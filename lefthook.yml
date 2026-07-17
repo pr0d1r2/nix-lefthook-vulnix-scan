@@ -3,11 +3,11 @@
 pre-commit:
   commands:
     markdownlint:
-      glob: "*.md"
+      glob: "**/*.md"
       exclude: "^(\\.claude/skills/)"
       run: timeout ${LEFTHOOK_MARKDOWNLINT_TIMEOUT:-30} lefthook-markdownlint {staged_files}
     markdownlint-agentic:
-      glob: "*.md"
+      glob: "**/*.md"
       exclude: "^(README|CHANGELOG|SPEC|CONTRIBUTING)\\.md$"
       run: timeout ${LEFTHOOK_MARKDOWNLINT_AGENTIC_TIMEOUT:-30} lefthook-markdownlint-agentic {staged_files}
     yamllint:
@@ -17,11 +17,11 @@ pre-commit:
 pre-push:
   commands:
     markdownlint:
-      glob: "*.md"
+      glob: "**/*.md"
       exclude: "^(\\.claude/skills/)"
-      run: timeout ${LEFTHOOK_MARKDOWNLINT_TIMEOUT:-30} lefthook-markdownlint {push_files}
+      run: timeout ${LEFTHOOK_MARKDOWNLINT_TIMEOUT:-30} lefthook-markdownlint {all_files}
     markdownlint-agentic:
-      glob: "*.md"
+      glob: "**/*.md"
       exclude: "^(README|CHANGELOG|SPEC|CONTRIBUTING)\\.md$"
       run: timeout ${LEFTHOOK_MARKDOWNLINT_AGENTIC_TIMEOUT:-30} lefthook-markdownlint-agentic {push_files}
     yamllint:
