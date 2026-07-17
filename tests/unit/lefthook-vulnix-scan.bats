@@ -14,9 +14,16 @@ setup() {
     cat > "$TEST_TEMP/bin/vulnix" <<'SH'
 #!/usr/bin/env bash
 echo "vulnix $*" >> "$VULNIX_LOG"
+if [ "$1" = "-c" ]; then
+  test -f "$2/Data.fs"
+  test -w "$2"
+fi
 SH
     chmod +x "$TEST_TEMP/bin/vulnix"
     export VULNIX_LOG="$TEST_TEMP/vulnix.log"
+    mkdir -p "$TEST_TEMP/prebuilt-cache"
+    touch "$TEST_TEMP/prebuilt-cache/Data.fs"
+    export VULNIX_CACHE="$TEST_TEMP/prebuilt-cache"
 }
 
 teardown() {
@@ -105,6 +112,24 @@ run_script() {
 
 @test "respects VULNIX_MIRROR env var" {
     mkdir "$TEST_TEMP/result"
+    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_MIRROR='https://custom-mirror.example.com/' bash '$SCRIPT'"
+    assert_success
+    run cat "$VULNIX_LOG"
+    assert_output --partial "--mirror https://custom-mirror.example.com/"
+}
+
+@test "uses a writable copy of the pre-built cache by default" {
+    mkdir "$TEST_TEMP/result"
+    run run_script
+    assert_success
+    run cat "$VULNIX_LOG"
+    assert_output --partial "-c "
+    refute_output --partial "--mirror"
+}
+
+@test "does not prepare the pre-built cache when mirror fallback is selected" {
+    mkdir "$TEST_TEMP/result"
+    rm "$TEST_TEMP/prebuilt-cache/Data.fs"
     run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_MIRROR='https://custom-mirror.example.com/' bash '$SCRIPT'"
     assert_success
     run cat "$VULNIX_LOG"

@@ -5,11 +5,21 @@
 results="${VULNIX_RESULTS:-result-darwin result}"
 whitelist="${VULNIX_WHITELIST:-.vulnix-whitelist.toml}"
 system_whitelist="${VULNIX_WHITELIST_SYSTEM:-.vulnix-whitelist-system.toml}"
-mirror="${VULNIX_MIRROR:-https://pr0d1r2.github.io/nix-vulnix-nvd-mirror/}"
 
 whitelist_args=()
 [ -f "$whitelist" ] && whitelist_args+=(--whitelist "$whitelist")
 [ -f "$system_whitelist" ] && whitelist_args+=(--whitelist "$system_whitelist")
+
+scan_args=()
+if [ -n "${VULNIX_MIRROR:-}" ]; then
+  scan_args+=(--mirror "$VULNIX_MIRROR")
+else
+  cache_source="${VULNIX_CACHE:-@VULNIX_CACHE@}"
+  cache_dir="$(mktemp -d "${TMPDIR:-/tmp}/vulnix-cache.XXXXXX")"
+  trap 'rm -rf "$cache_dir"' EXIT
+  cp "$cache_source/Data.fs" "$cache_dir/Data.fs"
+  scan_args+=(-c "$cache_dir")
+fi
 
 max_retries="${VULNIX_RETRIES:-3}"
 base_delay="${VULNIX_RETRY_DELAY:-5}"
@@ -19,7 +29,7 @@ for r in $results; do
   [ -e "$r" ] || continue
   attempt=1
   while [ "$attempt" -le "$max_retries" ]; do
-    if vulnix --mirror "$mirror" "${whitelist_args[@]}" "./$r"; then
+    if vulnix "${scan_args[@]}" "${whitelist_args[@]}" "./$r"; then
       break
     fi
     if [ "$attempt" -eq "$max_retries" ]; then

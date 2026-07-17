@@ -4,10 +4,11 @@ nix-lefthook-vulnix-scan is a Nix flake that provides a lefthook-compatible
 vulnerability scanner for Nix build outputs. It wraps
 [vulnix](https://github.com/nix-community/vulnix) to scan build result
 symlinks (`result`, `result-darwin`) for known CVEs, with support for
-project-specific and system-level whitelists, exponential-backoff retries,
-and an NVD mirror to avoid rate limiting. The package is intended for Nix
-developers who want automated CVE scanning as a git pre-push hook, usable
-either as a flake input or as a remote lefthook configuration.
+project-specific and system-level whitelists, an offline pre-built NVD cache,
+and an optional mirror fallback with exponential-backoff retries. The package
+is intended for Nix developers who want automated CVE scanning as a git
+pre-push hook, usable either as a flake input or as a remote lefthook
+configuration.
 
 ## §V — Invariants
 
@@ -53,7 +54,8 @@ environment variables.
 | `VULNIX_RESULTS` | space-separated paths | `result-darwin result` | Build result symlinks to scan |
 | `VULNIX_WHITELIST` | path | `.vulnix-whitelist.toml` | Project whitelist file |
 | `VULNIX_WHITELIST_SYSTEM` | path | `.vulnix-whitelist-system.toml` | System/CI whitelist file |
-| `VULNIX_MIRROR` | URL | `https://pr0d1r2.github.io/nix-vulnix-nvd-mirror/` | NVD feed mirror |
+| `VULNIX_CACHE` | path | pre-built Nix store path | Directory containing the pre-built `Data.fs` |
+| `VULNIX_MIRROR` | URL | unset | NVD feed mirror; enables the network fallback when set |
 | `VULNIX_RETRIES` | integer | `3` | Max retry attempts per result |
 | `VULNIX_RETRY_DELAY` | integer (seconds) | `5` | Base delay for exponential backoff |
 | `LEFTHOOK_VULNIX_SCAN_TIMEOUT` | integer (seconds) | `120` | Outer timeout wrapping the scan |
@@ -148,3 +150,8 @@ under `pre-push`.
     `nix-lefthook-markdownlint-agentic` flake inputs and their
     `writeShellApplication` wrappers (the former also wiring the
     `is-markdown-agentic` helper).
+
+11. ~~**Scan-time NVD downloads make cold CI unreliable**~~: Fixed. The
+    package consumes the pre-built `Data.fs` from nix-vulnix-nvd-mirror and
+    scans a writable temporary copy with `vulnix -c`. `VULNIX_MIRROR` remains
+    available as an explicit network fallback.

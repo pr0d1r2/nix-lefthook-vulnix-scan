@@ -10,6 +10,7 @@
     nixpkgs-lock.url = "github:pr0d1r2/nixpkgs-lock";
     nixpkgs.follows = "nixpkgs-lock/nixpkgs";
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nix-vulnix-nvd-mirror.url = "github:pr0d1r2/nix-vulnix-nvd-mirror/hallucinogen/issue-26";
     nix-lefthook-bats-parse-src = {
       url = "github:pr0d1r2/nix-lefthook-bats-parse";
       flake = false;
@@ -93,6 +94,7 @@
       self,
       nixpkgs,
       nixpkgs-unstable,
+      nix-vulnix-nvd-mirror,
       nix-lefthook-bats-parse-src,
       nix-lefthook-bats-unit-src,
       nix-lefthook-deadnix-src,
@@ -249,7 +251,11 @@
           pkgs.writeShellApplication {
             name = "lefthook-vulnix-scan";
             runtimeInputs = [ nixpkgs-unstable.legacyPackages.${system}.vulnix ];
-            text = builtins.readFile ./lefthook-vulnix-scan.sh;
+            text =
+              builtins.replaceStrings
+                [ "@VULNIX_CACHE@" ]
+                [ "${nix-vulnix-nvd-mirror.packages.${system}.nvd-cache}" ]
+                (builtins.readFile ./lefthook-vulnix-scan.sh);
           };
       });
 
