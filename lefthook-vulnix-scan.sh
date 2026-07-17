@@ -18,6 +18,7 @@ else
   cache_dir="$(mktemp -d "${TMPDIR:-/tmp}/vulnix-cache.XXXXXX")"
   trap 'rm -rf "$cache_dir"' EXIT
   cp "$cache_source/Data.fs" "$cache_dir/Data.fs"
+  chmod u+w "$cache_dir/Data.fs"
   scan_args+=(-c "$cache_dir")
 fi
 

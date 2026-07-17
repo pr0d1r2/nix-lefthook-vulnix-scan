@@ -23,6 +23,7 @@ SH
     export VULNIX_LOG="$TEST_TEMP/vulnix.log"
     mkdir -p "$TEST_TEMP/prebuilt-cache"
     touch "$TEST_TEMP/prebuilt-cache/Data.fs"
+    chmod a-w "$TEST_TEMP/prebuilt-cache/Data.fs"
     export VULNIX_CACHE="$TEST_TEMP/prebuilt-cache"
 }
 
