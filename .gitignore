@@ -2,3 +2,7 @@ result
 result-*
 .direnv
 .vulnix-whitelist-system.toml
+.direnv/
+.markdownlint.yml
+.yamllint.yml
+lefthook.yml
