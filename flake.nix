@@ -1,5 +1,5 @@
 {
-  description = "CHANGEME";
+  description = "Lefthook-compatible vulnix scan";
 
   nixConfig = {
     extra-substituters = [ "https://pr0d1r2.cachix.org" ];
@@ -23,11 +23,6 @@
       nixpkgs-unstable,
       ...
     }:
-    let
-      forAllSystems =
-        f: nixpkgs.lib.genAttrs supportedSystems (system: f nixpkgs.legacyPackages.${system});
-          batsWithLibs = batsWithLibsFor pkgs;
-    in
     set-and-setting.lib.mkConsumerFlake {
       inherit self nixpkgs set-and-setting;
       fragments = [
@@ -38,36 +33,28 @@
         "markdown"
         "yaml"
       ];
-      extraPackages = pkgs: {
-          default =
-            let
-              inherit (pkgs.stdenv.hostPlatform) system;
-        devShells = forAllSystems (
-          pkgs:
-          let
-            inherit (pkgs.stdenv.hostPlatform) system;
-            batsWithLibs = batsWithLibsFor pkgs;
-          in
-          rec {
-            default = pkgs.mkShell {
-                self.packages.${system}.default
-                batsWithLibs
-                pkgs.coreutils
-                pkgs.git
-                pkgs.lefthook
-                pkgs.markdownlint-cli
-                pkgs.nix
-                pkgs.parallel
-              ]
-              ++ (lefthookWrappersFor pkgs);
-              shellHook = builtins.replaceStrings [ "@BATS_LIB_PATH@" ] [ "${batsWithLibs}" ] (
-                builtins.readFile ./dev.sh
-              );
-            };
-            ci = default;
-          }
-        );
-      };
+      extraPackages =
+        pkgs:
+        let
+          inherit (pkgs.stdenv.hostPlatform) system;
+          # vulnix hardcodes a 10s read timeout on the NVD-archive download.
+          # Keep the existing guarded override so a slow mirror does not cause
+          # a false-negative scan failure.
+          vulnix = nixpkgs-unstable.legacyPackages.${system}.vulnix.overrideAttrs (old: {
+            postPatch = (old.postPatch or "") + ''
+              substituteInPlace src/vulnix/nvd.py \
+                --replace 'timeout=10)' 'timeout=60)'
+              grep -q 'timeout=60)' src/vulnix/nvd.py
+            '';
+          });
+        in
+        {
+          default = pkgs.writeShellApplication {
+            name = "lefthook-vulnix-scan";
+            runtimeInputs = [ vulnix ];
+            text = builtins.readFile ./lefthook-vulnix-scan.sh;
+          };
+        };
       src = ./.;
     };
 }

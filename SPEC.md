@@ -164,3 +164,9 @@ under `pre-push`.
     revert to 10s). Bandaid: the DB is still re-downloaded every run — the
     durable fix (an offline/FOD-cached NVD DB + a fetch-failure-degrades-
     neutral net, so a dead mirror never RED-gates a PR) is deferred.
+
+12. ~~**Migration generated an invalid `flake.nix`**~~: Fixed. The
+    vendored-to-referenced migration left orphaned helper bindings and an
+    incomplete package/dev-shell expression, so guardrails failed while
+    parsing the flake. Rebuilt the consumer flake around `mkConsumerFlake`'s
+    `extraPackages` interface while preserving the vulnix timeout override.
