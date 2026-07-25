@@ -3,7 +3,6 @@
 setup() {
     load "$BATS_LIB_PATH/bats-support/load"
     load "$BATS_LIB_PATH/bats-assert/load"
-    load "$BATS_LIB_PATH/bats-file/load"
 
     REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/../.." && pwd)"
     SCRIPT="$REPO_ROOT/lefthook-vulnix-scan.sh"
@@ -13,10 +12,13 @@ setup() {
     mkdir -p "$TEST_TEMP/bin"
     cat > "$TEST_TEMP/bin/vulnix" <<'SH'
 #!/usr/bin/env bash
-echo "vulnix $*" >> "$VULNIX_LOG"
+echo "offline=${VULNIX_OFFLINE:-0} vulnix $*" >> "$VULNIX_LOG"
 SH
     chmod +x "$TEST_TEMP/bin/vulnix"
     export VULNIX_LOG="$TEST_TEMP/vulnix.log"
+    mkdir "$TEST_TEMP/nvd-cache"
+    touch "$TEST_TEMP/nvd-cache/Data.fs"
+    export VULNIX_CACHE_SOURCE="$TEST_TEMP/nvd-cache"
 }
 
 teardown() {
@@ -47,6 +49,16 @@ run_script() {
     assert_success
     run cat "$VULNIX_LOG"
     assert_output --partial "./result"
+}
+
+@test "uses the pre-built cache offline by default" {
+    mkdir "$TEST_TEMP/result"
+    run run_script
+    assert_success
+    run cat "$VULNIX_LOG"
+    assert_output --partial "offline=1"
+    assert_output --partial "-c "
+    refute_output --partial "--mirror"
 }
 
 @test "scans both result symlinks" {
@@ -108,6 +120,7 @@ run_script() {
     run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_MIRROR='https://custom-mirror.example.com/' bash '$SCRIPT'"
     assert_success
     run cat "$VULNIX_LOG"
+    assert_output --partial "offline=0"
     assert_output --partial "--mirror https://custom-mirror.example.com/"
 }
 
@@ -118,7 +131,7 @@ run_script() {
 exit 1
 SH
     chmod +x "$TEST_TEMP/bin/vulnix"
-    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_RETRIES=2 VULNIX_RETRY_DELAY=0 bash '$SCRIPT'"
+    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_MIRROR='https://mirror.example.com/' VULNIX_RETRIES=2 VULNIX_RETRY_DELAY=0 bash '$SCRIPT'"
     assert_failure
     assert_output --partial "failed after 2 attempts"
 }
@@ -139,7 +152,7 @@ fi
 exit 0
 SH
     chmod +x "$TEST_TEMP/bin/vulnix"
-    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_RETRIES=2 VULNIX_RETRY_DELAY=1 bash '$SCRIPT'"
+    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_MIRROR='https://mirror.example.com/' VULNIX_RETRIES=2 VULNIX_RETRY_DELAY=1 bash '$SCRIPT'"
     assert_success
     assert_output --partial "retrying in 1s"
 }
@@ -160,7 +173,7 @@ fi
 exit 0
 SH
     chmod +x "$TEST_TEMP/bin/vulnix"
-    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_RETRIES=2 VULNIX_RETRY_DELAY=0 bash '$SCRIPT'"
+    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_MIRROR='https://mirror.example.com/' VULNIX_RETRIES=2 VULNIX_RETRY_DELAY=0 bash '$SCRIPT'"
     assert_success
     assert_output --partial "attempt 1 failed, retrying in 0s"
 }
@@ -172,7 +185,7 @@ SH
 exit 1
 SH
     chmod +x "$TEST_TEMP/bin/vulnix"
-    export VULNIX_RETRIES=1
     run run_script
     assert_failure
+    assert_output --partial "scan failed"
 }
