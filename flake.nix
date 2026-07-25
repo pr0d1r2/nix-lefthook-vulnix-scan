@@ -48,10 +48,14 @@
             inherit (pkgs.stdenv.hostPlatform) system;
             vulnix = nixpkgs-unstable.legacyPackages.${system}.vulnix.overrideAttrs (old: {
               postPatch = (old.postPatch or "") + ''
+                # Keep live-mirror fallback tolerant of slow responses.
+                substituteInPlace src/vulnix/nvd.py \
+                  --replace-fail 'timeout=10)' 'timeout=60)'
                 substituteInPlace src/vulnix/nvd.py \
                   --replace-fail \
                     'def update(self):' \
                     $'def update(self):\n        if os.environ.get("VULNIX_OFFLINE") == "1":\n            return'
+                grep -q 'timeout=60)' src/vulnix/nvd.py
                 grep -q 'os.environ.get("VULNIX_OFFLINE")' src/vulnix/nvd.py
               '';
             });
