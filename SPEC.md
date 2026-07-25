@@ -170,3 +170,10 @@ under `pre-push`.
     incomplete package/dev-shell expression, so guardrails failed while
     parsing the flake. Rebuilt the consumer flake around `mkConsumerFlake`'s
     `extraPackages` interface while preserving the vulnix timeout override.
+
+13. ~~**Referenced confirm app cannot find fragment wrappers**~~: Fixed.
+    The locked `mkConsumerFlake` confirm app checked generated commands
+    against a PATH containing only core utilities, so markdown and YAML
+    wrappers were falsely reported missing even though the development shell
+    provided them. Wrapped the upstream confirm app with the materialized
+    fragment packages on PATH.
