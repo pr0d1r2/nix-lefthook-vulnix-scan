@@ -245,10 +245,24 @@
         default =
           let
             inherit (pkgs.stdenv.hostPlatform) system;
+            # vulnix hardcodes a 10s read timeout on the NVD-archive download
+            # (`requests.get(..., timeout=10)` in src/vulnix/nvd.py) — not env- or
+            # flag-configurable. The GH-Pages NVD mirror serving the full feeds
+            # routinely exceeds 10s, so the scan RED-failed on a slow-but-alive
+            # mirror (a network blip, ⊥ a vulnerability). Bump it to 60s. The
+            # `grep` guard FAILS the build loudly if a vulnix bump moves the
+            # pattern, so the patch can never silently no-op back to 10s.
+            vulnix = nixpkgs-unstable.legacyPackages.${system}.vulnix.overrideAttrs (old: {
+              postPatch = (old.postPatch or "") + ''
+                substituteInPlace src/vulnix/nvd.py \
+                  --replace 'timeout=10)' 'timeout=60)'
+                grep -q 'timeout=60)' src/vulnix/nvd.py
+              '';
+            });
           in
           pkgs.writeShellApplication {
             name = "lefthook-vulnix-scan";
-            runtimeInputs = [ nixpkgs-unstable.legacyPackages.${system}.vulnix ];
+            runtimeInputs = [ vulnix ];
             text = builtins.readFile ./lefthook-vulnix-scan.sh;
           };
       });

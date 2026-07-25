@@ -37,6 +37,9 @@ either as a flake input or as a remote lefthook configuration.
     is absent.
 16. Markdown files pass `markdownlint` (line-length and first-line-heading
     disabled via `.markdownlint.yml`).
+17. vulnix's NVD-download read timeout is patched to 60s (from the upstream
+    hardcoded 10s), with a build-time `grep` guard asserting the patch
+    landed — so a slow-but-alive mirror does not RED-fail the scan.
 
 ## §I — Interfaces
 
@@ -148,3 +151,16 @@ under `pre-push`.
     `nix-lefthook-markdownlint-agentic` flake inputs and their
     `writeShellApplication` wrappers (the former also wiring the
     `is-markdown-agentic` helper).
+
+11. ~~**vulnix NVD-download 10s timeout RED-fails on a slow-but-alive
+    mirror**~~: Fixed. vulnix hardcodes `requests.get(..., timeout=10)` in
+    `src/vulnix/nvd.py` (not env- or flag-configurable). The GH-Pages NVD
+    mirror serving the full feeds routinely exceeds 10s, so the scan failed
+    on a network blip, not a vulnerability (observed:
+    `ReadTimeoutError ... pr0d1r2.github.io ... read timeout=10`, all 3
+    retries timed out, exit 1). `flake.nix` now `overrideAttrs`-patches
+    vulnix to `timeout=60`, guarded by `grep -q 'timeout=60)'` so the build
+    FAILS loudly if a vulnix bump moves the pattern (it can never silently
+    revert to 10s). Bandaid: the DB is still re-downloaded every run — the
+    durable fix (an offline/FOD-cached NVD DB + a fetch-failure-degrades-
+    neutral net, so a dead mirror never RED-gates a PR) is deferred.
