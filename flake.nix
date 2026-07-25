@@ -1,5 +1,5 @@
 {
-  description = "Lefthook-compatible vulnix scan";
+  description = "CHANGEME";
 
   nixConfig = {
     extra-substituters = [ "https://pr0d1r2.cachix.org" ];
@@ -9,289 +9,65 @@
   inputs = {
     nixpkgs-lock.url = "github:pr0d1r2/nixpkgs-lock";
     nixpkgs.follows = "nixpkgs-lock/nixpkgs";
+
+    set-and-setting.url = "github:pr0d1r2/set-and-setting";
+
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
-    nix-lefthook-bats-parse-src = {
-      url = "github:pr0d1r2/nix-lefthook-bats-parse";
-      flake = false;
-    };
-    nix-lefthook-bats-unit-src = {
-      url = "github:pr0d1r2/nix-lefthook-bats-unit";
-      flake = false;
-    };
-    nix-lefthook-deadnix-src = {
-      url = "github:pr0d1r2/nix-lefthook-deadnix";
-      flake = false;
-    };
-    nix-lefthook-editorconfig-checker-src = {
-      url = "github:pr0d1r2/nix-lefthook-editorconfig-checker";
-      flake = false;
-    };
-    nix-lefthook-file-size-check-src = {
-      url = "github:pr0d1r2/nix-lefthook-file-size-check";
-      flake = false;
-    };
-    nix-lefthook-git-conflict-markers-src = {
-      url = "github:pr0d1r2/nix-lefthook-git-conflict-markers";
-      flake = false;
-    };
-    nix-lefthook-git-no-local-paths-src = {
-      url = "github:pr0d1r2/nix-lefthook-git-no-local-paths";
-      flake = false;
-    };
-    nix-lefthook-markdownlint-src = {
-      url = "github:pr0d1r2/nix-lefthook-markdownlint";
-      flake = false;
-    };
-    nix-lefthook-markdownlint-agentic-src = {
-      url = "github:pr0d1r2/nix-lefthook-markdownlint-agentic";
-      flake = false;
-    };
-    nix-lefthook-missing-final-newline-src = {
-      url = "github:pr0d1r2/nix-lefthook-missing-final-newline";
-      flake = false;
-    };
-    nix-lefthook-nix-flake-check-src = {
-      url = "github:pr0d1r2/nix-lefthook-nix-flake-check";
-      flake = false;
-    };
-    nix-lefthook-nix-no-embedded-shell-src = {
-      url = "github:pr0d1r2/nix-lefthook-nix-no-embedded-shell";
-      flake = false;
-    };
-    nix-lefthook-nixfmt-src = {
-      url = "github:pr0d1r2/nix-lefthook-nixfmt";
-      flake = false;
-    };
-    nix-lefthook-shellcheck-src = {
-      url = "github:pr0d1r2/nix-lefthook-shellcheck";
-      flake = false;
-    };
-    nix-lefthook-shfmt-src = {
-      url = "github:pr0d1r2/nix-lefthook-shfmt";
-      flake = false;
-    };
-    nix-lefthook-statix-src = {
-      url = "github:pr0d1r2/nix-lefthook-statix";
-      flake = false;
-    };
-    nix-lefthook-trailing-whitespace-src = {
-      url = "github:pr0d1r2/nix-lefthook-trailing-whitespace";
-      flake = false;
-    };
-    nix-lefthook-typos-src = {
-      url = "github:pr0d1r2/nix-lefthook-typos";
-      flake = false;
-    };
-    nix-lefthook-yamllint-src = {
-      url = "github:pr0d1r2/nix-lefthook-yamllint";
-      flake = false;
-    };
   };
 
   outputs =
     {
       self,
       nixpkgs,
+      set-and-setting,
       nixpkgs-unstable,
-      nix-lefthook-bats-parse-src,
-      nix-lefthook-bats-unit-src,
-      nix-lefthook-deadnix-src,
-      nix-lefthook-editorconfig-checker-src,
-      nix-lefthook-file-size-check-src,
-      nix-lefthook-git-conflict-markers-src,
-      nix-lefthook-git-no-local-paths-src,
-      nix-lefthook-markdownlint-src,
-      nix-lefthook-markdownlint-agentic-src,
-      nix-lefthook-missing-final-newline-src,
-      nix-lefthook-nix-flake-check-src,
-      nix-lefthook-nix-no-embedded-shell-src,
-      nix-lefthook-nixfmt-src,
-      nix-lefthook-shellcheck-src,
-      nix-lefthook-shfmt-src,
-      nix-lefthook-statix-src,
-      nix-lefthook-trailing-whitespace-src,
-      nix-lefthook-typos-src,
-      nix-lefthook-yamllint-src,
       ...
     }:
     let
-      supportedSystems = [
-        "aarch64-darwin"
-        "x86_64-darwin"
-        "x86_64-linux"
-        "aarch64-linux"
-      ];
       forAllSystems =
         f: nixpkgs.lib.genAttrs supportedSystems (system: f nixpkgs.legacyPackages.${system});
-
-      lefthookWrappersFor =
-        pkgs:
-        let
-          wrap =
-            name: src: extra:
-            pkgs.writeShellApplication (
-              {
-                inherit name;
-                text = builtins.readFile "${src}/${name}.sh";
-              }
-              // extra
-            );
-        in
-        [
-          (wrap "lefthook-bats-parse" nix-lefthook-bats-parse-src {
-            runtimeInputs = [ pkgs.bats ];
-          })
-          (wrap "lefthook-bats-unit" nix-lefthook-bats-unit-src {
-            runtimeInputs = [
-              pkgs.bats
-              pkgs.coreutils
-              pkgs.parallel
-            ];
-          })
-          (wrap "lefthook-deadnix" nix-lefthook-deadnix-src {
-            runtimeInputs = [ pkgs.deadnix ];
-          })
-          (wrap "lefthook-editorconfig-checker" nix-lefthook-editorconfig-checker-src {
-            runtimeInputs = [ pkgs.editorconfig-checker ];
-          })
-          (wrap "get-file-size-limit" nix-lefthook-file-size-check-src {
-            runtimeInputs = [
-              pkgs.gawk
-              pkgs.gnugrep
-            ];
-          })
-          (pkgs.writeShellApplication {
-            name = "lefthook-file-size-check";
-            runtimeInputs = [
-              pkgs.gawk
-              pkgs.gnugrep
-              pkgs.coreutils
-              (wrap "get-file-size-limit" nix-lefthook-file-size-check-src {
-                runtimeInputs = [
-                  pkgs.gawk
-                  pkgs.gnugrep
-                ];
-              })
-            ];
-            text = builtins.readFile "${nix-lefthook-file-size-check-src}/lefthook-file-size-check.sh";
-          })
-          (wrap "lefthook-git-conflict-markers" nix-lefthook-git-conflict-markers-src {
-            runtimeInputs = [ pkgs.gnugrep ];
-          })
-          (wrap "lefthook-git-no-local-paths" nix-lefthook-git-no-local-paths-src {
-            runtimeInputs = [ pkgs.gnugrep ];
-          })
-          (pkgs.writeShellApplication {
-            name = "lefthook-markdownlint";
-            runtimeInputs = [
-              pkgs.markdownlint-cli
-              (wrap "is-markdown-agentic" nix-lefthook-markdownlint-src { })
-            ];
-            text = builtins.readFile "${nix-lefthook-markdownlint-src}/lefthook-markdownlint.sh";
-          })
-          (pkgs.writeShellApplication {
-            name = "lefthook-markdownlint-agentic";
-            runtimeInputs = [ pkgs.markdownlint-cli ];
-            text =
-              builtins.replaceStrings
-                [ "@MARKDOWNLINT_AGENTIC_CONFIG@" ]
-                [ "${nix-lefthook-markdownlint-agentic-src}/.markdownlint-agentic.yml" ]
-                (builtins.readFile "${nix-lefthook-markdownlint-agentic-src}/lefthook-markdownlint-agentic.sh");
-          })
-          (wrap "lefthook-missing-final-newline" nix-lefthook-missing-final-newline-src { })
-          (wrap "lefthook-nix-flake-check" nix-lefthook-nix-flake-check-src {
-            runtimeInputs = [ pkgs.nix ];
-          })
-          (pkgs.writeShellApplication {
-            name = "lefthook-nix-no-embedded-shell";
-            text = ''
-              SCANNER="${nix-lefthook-nix-no-embedded-shell-src}/scan-nix-no-embedded-shell.sh"
-            ''
-            + builtins.readFile "${nix-lefthook-nix-no-embedded-shell-src}/lefthook-nix-no-embedded-shell.sh";
-          })
-          (wrap "lefthook-nixfmt" nix-lefthook-nixfmt-src {
-            runtimeInputs = [ pkgs.nixfmt ];
-          })
-          (wrap "lefthook-shellcheck" nix-lefthook-shellcheck-src {
-            runtimeInputs = [ pkgs.shellcheck ];
-          })
-          (wrap "lefthook-shfmt" nix-lefthook-shfmt-src {
-            runtimeInputs = [ pkgs.shfmt ];
-          })
-          (wrap "lefthook-statix" nix-lefthook-statix-src {
-            runtimeInputs = [ pkgs.statix ];
-          })
-          (wrap "lefthook-trailing-whitespace" nix-lefthook-trailing-whitespace-src {
-            runtimeInputs = [ pkgs.gnugrep ];
-          })
-          (wrap "lefthook-typos" nix-lefthook-typos-src {
-            runtimeInputs = [ pkgs.typos ];
-          })
-          (wrap "lefthook-yamllint" nix-lefthook-yamllint-src {
-            runtimeInputs = [ pkgs.yamllint ];
-          })
-        ];
-
-      batsWithLibsFor =
-        pkgs:
-        pkgs.bats.withLibraries (p: [
-          p.bats-support
-          p.bats-assert
-          p.bats-file
-        ]);
+          batsWithLibs = batsWithLibsFor pkgs;
     in
-    {
-      packages = forAllSystems (pkgs: {
-        default =
+    set-and-setting.lib.mkConsumerFlake {
+      inherit self nixpkgs set-and-setting;
+      fragments = [
+        "base"
+        "nix"
+        "shell"
+        "ascii"
+        "markdown"
+        "yaml"
+      ];
+      extraPackages = pkgs: {
+          default =
+            let
+              inherit (pkgs.stdenv.hostPlatform) system;
+        devShells = forAllSystems (
+          pkgs:
           let
             inherit (pkgs.stdenv.hostPlatform) system;
-            # vulnix hardcodes a 10s read timeout on the NVD-archive download
-            # (`requests.get(..., timeout=10)` in src/vulnix/nvd.py) — not env- or
-            # flag-configurable. The GH-Pages NVD mirror serving the full feeds
-            # routinely exceeds 10s, so the scan RED-failed on a slow-but-alive
-            # mirror (a network blip, ⊥ a vulnerability). Bump it to 60s. The
-            # `grep` guard FAILS the build loudly if a vulnix bump moves the
-            # pattern, so the patch can never silently no-op back to 10s.
-            vulnix = nixpkgs-unstable.legacyPackages.${system}.vulnix.overrideAttrs (old: {
-              postPatch = (old.postPatch or "") + ''
-                substituteInPlace src/vulnix/nvd.py \
-                  --replace 'timeout=10)' 'timeout=60)'
-                grep -q 'timeout=60)' src/vulnix/nvd.py
-              '';
-            });
+            batsWithLibs = batsWithLibsFor pkgs;
           in
-          pkgs.writeShellApplication {
-            name = "lefthook-vulnix-scan";
-            runtimeInputs = [ vulnix ];
-            text = builtins.readFile ./lefthook-vulnix-scan.sh;
-          };
-      });
-
-      devShells = forAllSystems (
-        pkgs:
-        let
-          inherit (pkgs.stdenv.hostPlatform) system;
-          batsWithLibs = batsWithLibsFor pkgs;
-        in
-        rec {
-          default = pkgs.mkShell {
-            packages = [
-              self.packages.${system}.default
-              batsWithLibs
-              pkgs.coreutils
-              pkgs.git
-              pkgs.lefthook
-              pkgs.markdownlint-cli
-              pkgs.nix
-              pkgs.parallel
-            ]
-            ++ (lefthookWrappersFor pkgs);
-            shellHook = builtins.replaceStrings [ "@BATS_LIB_PATH@" ] [ "${batsWithLibs}" ] (
-              builtins.readFile ./dev.sh
-            );
-          };
-          ci = default;
-        }
-      );
+          rec {
+            default = pkgs.mkShell {
+                self.packages.${system}.default
+                batsWithLibs
+                pkgs.coreutils
+                pkgs.git
+                pkgs.lefthook
+                pkgs.markdownlint-cli
+                pkgs.nix
+                pkgs.parallel
+              ]
+              ++ (lefthookWrappersFor pkgs);
+              shellHook = builtins.replaceStrings [ "@BATS_LIB_PATH@" ] [ "${batsWithLibs}" ] (
+                builtins.readFile ./dev.sh
+              );
+            };
+            ci = default;
+          }
+        );
+      };
+      src = ./.;
     };
 }
