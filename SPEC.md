@@ -56,9 +56,9 @@ environment variables.
 | `VULNIX_RESULTS` | space-separated paths | `result-darwin result` | Build result symlinks to scan |
 | `VULNIX_WHITELIST` | path | `.vulnix-whitelist.toml` | Project whitelist file |
 | `VULNIX_WHITELIST_SYSTEM` | path | `.vulnix-whitelist-system.toml` | System/CI whitelist file |
-| `VULNIX_MIRROR` | URL | `https://pr0d1r2.github.io/nix-vulnix-nvd-mirror/` | NVD feed mirror |
-| `VULNIX_RETRIES` | integer | `3` | Max retry attempts per result |
-| `VULNIX_RETRY_DELAY` | integer (seconds) | `5` | Base delay for exponential backoff |
+| `VULNIX_MIRROR` | URL | unset | NVD feed mirror; enables live-download fallback |
+| `VULNIX_RETRIES` | integer | `3` | Live-download retry attempts per result |
+| `VULNIX_RETRY_DELAY` | integer (seconds) | `5` | Live-download base retry delay |
 | `LEFTHOOK_VULNIX_SCAN_TIMEOUT` | integer (seconds) | `120` | Outer timeout wrapping the scan |
 | `BATS_LIB_PATH` | path | set by `dev.sh` | Bats helper library path (dev shell only) |
 | `NIX_CONFIG` | string | set by `dev.sh` | Enables `nix-command flakes` (dev shell only) |
@@ -154,16 +154,9 @@ under `pre-push`.
 
 11. ~~**vulnix NVD-download 10s timeout RED-fails on a slow-but-alive
     mirror**~~: Fixed. vulnix hardcodes `requests.get(..., timeout=10)` in
-    `src/vulnix/nvd.py` (not env- or flag-configurable). The GH-Pages NVD
-    mirror serving the full feeds routinely exceeds 10s, so the scan failed
-    on a network blip, not a vulnerability (observed:
-    `ReadTimeoutError ... pr0d1r2.github.io ... read timeout=10`, all 3
-    retries timed out, exit 1). `flake.nix` now `overrideAttrs`-patches
-    vulnix to `timeout=60`, guarded by `grep -q 'timeout=60)'` so the build
-    FAILS loudly if a vulnix bump moves the pattern (it can never silently
-    revert to 10s). Bandaid: the DB is still re-downloaded every run — the
-    durable fix (an offline/FOD-cached NVD DB + a fetch-failure-degrades-
-    neutral net, so a dead mirror never RED-gates a PR) is deferred.
+    `src/vulnix/nvd.py` (not env- or flag-configurable). The live-download
+    fallback retains a guarded patch to `timeout=60`. Normal scans use the
+    pre-built NVD database offline, so a dead mirror cannot RED-gate a PR.
 
 12. ~~**Migration generated an invalid `flake.nix`**~~: Fixed. The
     vendored-to-referenced migration left orphaned helper bindings and an

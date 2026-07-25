@@ -12,6 +12,8 @@
 
     set-and-setting.url = "github:pr0d1r2/set-and-setting";
 
+    nix-vulnix-nvd-mirror.url = "github:pr0d1r2/nix-vulnix-nvd-mirror";
+
     nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
   };
 
@@ -19,6 +21,7 @@
     {
       self,
       nixpkgs,
+      nix-vulnix-nvd-mirror,
       set-and-setting,
       nixpkgs-unstable,
       ...
@@ -43,21 +46,26 @@
           pkgs:
           let
             inherit (pkgs.stdenv.hostPlatform) system;
-            # vulnix hardcodes a 10s read timeout on the NVD-archive download.
-            # Keep the existing guarded override so a slow mirror does not cause
-            # a false-negative scan failure.
             vulnix = nixpkgs-unstable.legacyPackages.${system}.vulnix.overrideAttrs (old: {
               postPatch = (old.postPatch or "") + ''
+                # Keep live-mirror fallback tolerant of slow responses.
                 substituteInPlace src/vulnix/nvd.py \
-                  --replace 'timeout=10)' 'timeout=60)'
+                  --replace-fail 'timeout=10)' 'timeout=60)'
+                substituteInPlace src/vulnix/nvd.py \
+                  --replace-fail \
+                    'def update(self):' \
+                    $'def update(self):\n        if os.environ.get("VULNIX_OFFLINE") == "1":\n            return'
                 grep -q 'timeout=60)' src/vulnix/nvd.py
+                grep -q 'os.environ.get("VULNIX_OFFLINE")' src/vulnix/nvd.py
               '';
             });
+            inherit (nix-vulnix-nvd-mirror.packages.${system}) nvd-cache;
           in
           {
             default = pkgs.writeShellApplication {
               name = "lefthook-vulnix-scan";
               runtimeInputs = [ vulnix ];
+              runtimeEnv.VULNIX_CACHE_SOURCE = nvd-cache;
               text = builtins.readFile ./lefthook-vulnix-scan.sh;
             };
           };
