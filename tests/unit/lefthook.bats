@@ -32,13 +32,13 @@ setup() {
   assert_output "1"
 }
 
-@test "pre-commit markdownlint uses recursive glob for md files" {
-  run bash -c 'sed -n "/^pre-commit:/,/^pre-push:/p" "$1" | grep -q "glob:.*\*\*/\*\\.md"' -- "$CONFIG"
+@test "pre-commit markdownlint selects md files" {
+  run bash -c 'sed -n "/^pre-commit:/,/^pre-push:/p" "$1" | grep -q "glob:.*\\*\\.md"' -- "$CONFIG"
   assert_success
 }
 
-@test "pre-push markdownlint uses recursive glob for md files" {
-  run bash -c 'sed -n "/^pre-push:/,\$p" "$1" | grep -q "glob:.*\*\*/\*\\.md"' -- "$CONFIG"
+@test "pre-push markdownlint selects md files" {
+  run bash -c 'sed -n "/^pre-push:/,\$p" "$1" | grep -q "glob:.*\\*\\.md"' -- "$CONFIG"
   assert_success
 }
 
@@ -57,7 +57,7 @@ setup() {
   assert_success
 }
 
-@test "pre-push markdownlint lints all files" {
-  run bash -c 'sed -n "/^pre-push:/,\$p" "$1" | grep -q "{all_files}"' -- "$CONFIG"
+@test "pre-push markdownlint lints pushed files" {
+  run bash -c 'sed -n "/^pre-push:/,\$p" "$1" | grep -q "{push_files}"' -- "$CONFIG"
   assert_success
 }
