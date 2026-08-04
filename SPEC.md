@@ -180,3 +180,8 @@ under `pre-push`.
     transitive inputs independently locked nixpkgs, causing the lock-graph
     guardrail to reject the flake. Shared nixpkgs inputs now follow the
     repository's canonical node, including the unstable alias.
+
+16. ~~**Guardrails rejected the flake formatting and repeated input keys**~~:
+    Fixed. `flake.nix` was not formatted and Statix rejected the dotted
+    `set-and-setting` input assignments; applied nixfmt and grouped the input
+    attributes.
