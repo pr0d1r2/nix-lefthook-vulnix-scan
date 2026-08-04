@@ -170,3 +170,8 @@ under `pre-push`.
     wrappers were falsely reported missing even though the development shell
     provided them. Wrapped the upstream confirm app with the materialized
     fragment packages on PATH.
+
+14. ~~**Flake manifest check rejected output structure**~~: Fixed. The flake
+    exposed helper bindings and `let` expressions in `outputs`, which the
+    manifest guardrail disallows. Inlined the consumer and fragment
+    definitions while preserving the custom confirm app wrapper.
