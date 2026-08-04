@@ -11,10 +11,13 @@
     nixpkgs.follows = "nixpkgs-lock/nixpkgs";
 
     set-and-setting.url = "github:pr0d1r2/set-and-setting";
+    set-and-setting.inputs.nixpkgs.follows = "nixpkgs";
+    set-and-setting.inputs.nixpkgs-lock.follows = "nixpkgs-lock";
 
     nix-vulnix-nvd-mirror.url = "github:pr0d1r2/nix-vulnix-nvd-mirror";
+    nix-vulnix-nvd-mirror.inputs.nixpkgs.follows = "nixpkgs";
 
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs-unstable.follows = "nixpkgs";
   };
 
   outputs =

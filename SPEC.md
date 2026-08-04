@@ -175,3 +175,8 @@ under `pre-push`.
     exposed helper bindings and `let` expressions in `outputs`, which the
     manifest guardrail disallows. Inlined the consumer and fragment
     definitions while preserving the custom confirm app wrapper.
+
+15. ~~**Lock graph contained four nixpkgs nodes**~~: Fixed. Direct and
+    transitive inputs independently locked nixpkgs, causing the lock-graph
+    guardrail to reject the flake. Shared nixpkgs inputs now follow the
+    repository's canonical node, including the unstable alias.
