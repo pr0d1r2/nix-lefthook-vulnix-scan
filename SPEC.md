@@ -170,3 +170,18 @@ under `pre-push`.
     wrappers were falsely reported missing even though the development shell
     provided them. Wrapped the upstream confirm app with the materialized
     fragment packages on PATH.
+
+14. ~~**Flake manifest check rejected output structure**~~: Fixed. The flake
+    exposed helper bindings and `let` expressions in `outputs`, which the
+    manifest guardrail disallows. Inlined the consumer and fragment
+    definitions while preserving the custom confirm app wrapper.
+
+15. ~~**Lock graph contained four nixpkgs nodes**~~: Fixed. Direct and
+    transitive inputs independently locked nixpkgs, causing the lock-graph
+    guardrail to reject the flake. Shared nixpkgs inputs now follow the
+    repository's canonical node, including the unstable alias.
+
+16. ~~**Guardrails rejected the flake formatting and repeated input keys**~~:
+    Fixed. `flake.nix` was not formatted and Statix rejected the dotted
+    `set-and-setting` input assignments; applied nixfmt and grouped the input
+    attributes.

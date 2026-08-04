@@ -10,11 +10,16 @@
     nixpkgs-lock.url = "github:pr0d1r2/nixpkgs-lock";
     nixpkgs.follows = "nixpkgs-lock/nixpkgs";
 
-    set-and-setting.url = "github:pr0d1r2/set-and-setting";
+    set-and-setting = {
+      url = "github:pr0d1r2/set-and-setting";
+      inputs.nixpkgs.follows = "nixpkgs";
+      inputs.nixpkgs-lock.follows = "nixpkgs-lock";
+    };
 
     nix-vulnix-nvd-mirror.url = "github:pr0d1r2/nix-vulnix-nvd-mirror";
+    nix-vulnix-nvd-mirror.inputs.nixpkgs.follows = "nixpkgs";
 
-    nixpkgs-unstable.url = "github:NixOS/nixpkgs/nixpkgs-unstable";
+    nixpkgs-unstable.follows = "nixpkgs";
   };
 
   outputs =
@@ -26,7 +31,12 @@
       nixpkgs-unstable,
       ...
     }:
-    let
+    set-and-setting.lib.mkConsumerFlake {
+      inherit
+        self
+        nixpkgs
+        set-and-setting
+        ;
       fragments = [
         "base"
         "nix"
@@ -35,18 +45,11 @@
         "markdown"
         "yaml"
       ];
-      consumer = set-and-setting.lib.mkConsumerFlake {
-        inherit
-          self
-          nixpkgs
-          set-and-setting
-          fragments
-          ;
-        extraPackages =
-          pkgs:
-          let
-            inherit (pkgs.stdenv.hostPlatform) system;
-            vulnix = nixpkgs-unstable.legacyPackages.${system}.vulnix.overrideAttrs (old: {
+      extraPackages = pkgs: {
+        default = pkgs.writeShellApplication {
+          name = "lefthook-vulnix-scan";
+          runtimeInputs = [
+            (nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.vulnix.overrideAttrs (old: {
               postPatch = (old.postPatch or "") + ''
                 # Keep live-mirror fallback tolerant of slow responses.
                 substituteInPlace src/vulnix/nvd.py \
@@ -58,47 +61,60 @@
                 grep -q 'timeout=60)' src/vulnix/nvd.py
                 grep -q 'os.environ.get("VULNIX_OFFLINE")' src/vulnix/nvd.py
               '';
-            });
-            inherit (nix-vulnix-nvd-mirror.packages.${system}) nvd-cache;
-          in
-          {
-            default = pkgs.writeShellApplication {
-              name = "lefthook-vulnix-scan";
-              runtimeInputs = [ vulnix ];
-              runtimeEnv.VULNIX_CACHE_SOURCE = nvd-cache;
-              text = builtins.readFile ./lefthook-vulnix-scan.sh;
-            };
-          };
-        src = ./.;
+            }))
+          ];
+          runtimeEnv.VULNIX_CACHE_SOURCE =
+            nix-vulnix-nvd-mirror.packages.${pkgs.stdenv.hostPlatform.system}.nvd-cache;
+          text = builtins.readFile ./lefthook-vulnix-scan.sh;
+        };
       };
-    in
-    consumer
+      src = ./.;
+    }
     // {
       # The locked mkConsumerFlake confirm app omits fragment wrappers from
       # PATH, although its coherence check requires them. Preserve the
       # upstream app while launching it with the materialized wrapper set.
-      apps = nixpkgs.lib.mapAttrs (
-        system: apps:
-        let
-          pkgs = nixpkgs.legacyPackages.${system};
-          materialization = set-and-setting.lib.materializationFor {
-            inherit pkgs fragments;
-          };
-        in
-        apps
-        // {
-          confirm = {
-            type = "app";
-            program = "${
-              pkgs.writeShellApplication {
-                name = "confirm-with-fragment-wrappers";
-                runtimeInputs = materialization.packages;
-                runtimeEnv.CONFIRM_PROGRAM = consumer.apps.${system}.confirm.program;
-                text = builtins.readFile ./confirm-with-fragment-wrappers.sh;
-              }
-            }/bin/confirm-with-fragment-wrappers";
-          };
-        }
-      ) consumer.apps;
+      apps =
+        nixpkgs.lib.mapAttrs
+          (
+            system: apps:
+            apps
+            // {
+              confirm = {
+                type = "app";
+                program = "${
+                  nixpkgs.legacyPackages.${system}.writeShellApplication {
+                    name = "confirm-with-fragment-wrappers";
+                    runtimeInputs =
+                      (set-and-setting.lib.materializationFor {
+                        pkgs = nixpkgs.legacyPackages.${system};
+                        fragments = [
+                          "base"
+                          "nix"
+                          "shell"
+                          "ascii"
+                          "markdown"
+                          "yaml"
+                        ];
+                      }).packages;
+                    runtimeEnv.CONFIRM_PROGRAM = apps.confirm.program;
+                    text = builtins.readFile ./confirm-with-fragment-wrappers.sh;
+                  }
+                }/bin/confirm-with-fragment-wrappers";
+              };
+            }
+          )
+          (set-and-setting.lib.mkConsumerFlake {
+            inherit self nixpkgs set-and-setting;
+            fragments = [
+              "base"
+              "nix"
+              "shell"
+              "ascii"
+              "markdown"
+              "yaml"
+            ];
+            src = ./.;
+          }).apps;
     };
 }
