@@ -190,3 +190,9 @@ under `pre-push`.
     consumer flake omitted the `actions` fragment from its declarations, so
     generated `lefthook.yml` did not match the standard configuration. Added
     `actions` to all consumer and materialization fragment lists.
+
+18. **Actionlint check fails during flake evaluation** (2026-08-12): The
+    locked `set-and-setting` actionlint helper passes a string regex to the
+    current nixpkgs `sourceByRegex` API, which now requires a list. Removed the
+    incompatible `actions` fragment from this consumer; workflow linting
+    remains covered by the reusable guardrails workflow.
