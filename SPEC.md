@@ -191,6 +191,13 @@ under `pre-push`.
     generated `lefthook.yml` did not match the standard configuration. Added
     `actions` to all consumer and materialization fragment lists.
 
+18. **Guardrails continued to detect lefthook fidelity drift** (2026-08-12):
+    A follow-up workaround removed the `actions` fragment to avoid an
+    unrelated actionlint evaluation error, but the guardrail materializer
+    derives that fragment from `.github/workflows/ci.yml` and therefore still
+    expected its hooks. Restored `actions` in every fragment declaration so
+    the consumer and confirm materializations agree.
+
 18. **Actionlint check fails during flake evaluation** (2026-08-12): The
     locked `set-and-setting` actionlint helper passes a string regex to the
     current nixpkgs `sourceByRegex` API, which now requires a list. Removed the

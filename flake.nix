@@ -39,6 +39,7 @@
         ;
       fragments = [
         "base"
+        "actions"
         "nix"
         "shell"
         "ascii"
@@ -89,8 +90,9 @@
                       (set-and-setting.lib.materializationFor {
                         pkgs = nixpkgs.legacyPackages.${system};
                         fragments = [
-                          "base"
-                          "nix"
+                        "base"
+                        "actions"
+                        "nix"
                           "shell"
                           "ascii"
                           "markdown"
@@ -108,6 +110,7 @@
             inherit self nixpkgs set-and-setting;
             fragments = [
               "base"
+              "actions"
               "nix"
               "shell"
               "ascii"
