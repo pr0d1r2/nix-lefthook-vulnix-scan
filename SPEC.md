@@ -185,3 +185,8 @@ under `pre-push`.
     Fixed. `flake.nix` was not formatted and Statix rejected the dotted
     `set-and-setting` input assignments; applied nixfmt and grouped the input
     attributes.
+
+17. **Guardrails detected lefthook fidelity drift** (2026-08-12): The
+    consumer flake omitted the `actions` fragment from its declarations, so
+    generated `lefthook.yml` did not match the standard configuration. Added
+    `actions` to all consumer and materialization fragment lists.
