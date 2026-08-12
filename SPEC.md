@@ -185,3 +185,8 @@ under `pre-push`.
     Fixed. `flake.nix` was not formatted and Statix rejected the dotted
     `set-and-setting` input assignments; applied nixfmt and grouped the input
     attributes.
+
+17. ~~**Bootstrap omitted the action fragment**~~: Fixed. The custom
+    `bootstrap-hooks` app materialized `lefthook.yml` without the `actions`
+    fragment even though the flake's guardrail configuration expected it.
+    Added `actions` to both materialization fragment lists.
