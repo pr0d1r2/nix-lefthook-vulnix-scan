@@ -185,3 +185,8 @@ under `pre-push`.
     Fixed. `flake.nix` was not formatted and Statix rejected the dotted
     `set-and-setting` input assignments; applied nixfmt and grouped the input
     attributes.
+
+17. **Actionlint fragment missing from materialized hooks**: The generated
+    `lefthook.yml` omitted the actionlint command despite the actions fragment
+    being selected, causing the guardrail fidelity check to fail. Added the
+    actionlint command to both hook phases.

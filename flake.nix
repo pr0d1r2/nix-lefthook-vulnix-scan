@@ -46,6 +46,11 @@
         "yaml"
       ];
       extraPackages = pkgs: {
+        actionlint = pkgs.writeShellApplication {
+          name = "lefthook-actionlint";
+          runtimeInputs = [ pkgs.actionlint ];
+          text = ''actionlint "$@"'';
+        };
         default = pkgs.writeShellApplication {
           name = "lefthook-vulnix-scan";
           runtimeInputs = [
