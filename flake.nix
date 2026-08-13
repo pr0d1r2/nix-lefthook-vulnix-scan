@@ -77,6 +77,35 @@
       src = ./.;
     }
     // {
+      checks = nixpkgs.lib.mapAttrs
+        (
+          system: checks:
+          checks
+          // {
+            actionlint = set-and-setting.lib.mkLefthookCheck {
+              pkgs = nixpkgs.legacyPackages.${system};
+              name = "actionlint";
+              wrapper = self.packages.${system}.actionlint;
+              src = nixpkgs.lib.sources.sourceByRegex
+                (nixpkgs.lib.sources.sourceFilesBySuffices ./. [ ".yml" ".yaml" ])
+                [ "^\\.github/workflows/.*" ];
+              suffices = null;
+            };
+          }
+        )
+        (set-and-setting.lib.mkConsumerFlake {
+          inherit self nixpkgs set-and-setting;
+          fragments = [
+            "base"
+            "actions"
+            "nix"
+            "shell"
+            "ascii"
+            "markdown"
+            "yaml"
+          ];
+          src = ./.;
+        }).checks;
       # The locked mkConsumerFlake confirm app omits fragment wrappers from
       # PATH, although its coherence check requires them. Preserve the
       # upstream app while launching it with the materialized wrapper set.

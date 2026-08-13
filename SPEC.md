@@ -200,3 +200,10 @@ under `pre-push`.
     confirm-app materialization declared only the other selected fragments.
     Aligning both fragment lists makes the generated `lefthook.yml` match the
     expected fragment composition.
+
+20. **Actionlint check fails during flake evaluation**: The locked
+    `set-and-setting` actionlint check passed a scalar workflow path prefix to
+    nixpkgs' `sourceByRegex`, which now requires a list of regular expressions.
+    This caused `nix flake check` to fail before running actionlint. Fixed by
+    supplying the workflow filter as a list through the generic check
+    interface.
