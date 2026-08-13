@@ -101,7 +101,8 @@
                           "markdown"
                           "yaml"
                         ];
-                      }).packages;
+                      }).packages
+                      ++ [ self.packages.${system}.actionlint ];
                     runtimeEnv.CONFIRM_PROGRAM = apps.confirm.program;
                     text = builtins.readFile ./confirm-with-fragment-wrappers.sh;
                   }

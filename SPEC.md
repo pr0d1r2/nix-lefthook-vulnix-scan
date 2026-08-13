@@ -190,3 +190,7 @@ under `pre-push`.
     `lefthook.yml` omitted the actionlint command despite the actions fragment
     being selected, causing the guardrail fidelity check to fail. Added the
     actionlint command to both hook phases.
+
+18. **Confirm app omitted the custom actionlint wrapper**: The wrapper was
+    defined as an extra package but was not added to the confirm app's PATH,
+    causing the coherence check to fail. Added it to `runtimeInputs`.
