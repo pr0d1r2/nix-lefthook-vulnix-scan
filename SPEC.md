@@ -194,3 +194,9 @@ under `pre-push`.
 18. **Confirm app omitted the custom actionlint wrapper**: The wrapper was
     defined as an extra package but was not added to the confirm app's PATH,
     causing the coherence check to fail. Added it to `runtimeInputs`.
+
+19. **Actions fragment omitted from consumer materialization**: The guardrail
+    fidelity check detected the `actions` fragment, but the consumer flake and
+    confirm-app materialization declared only the other selected fragments.
+    Aligning both fragment lists makes the generated `lefthook.yml` match the
+    expected fragment composition.
