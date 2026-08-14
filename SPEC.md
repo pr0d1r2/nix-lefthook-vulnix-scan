@@ -186,24 +186,10 @@ under `pre-push`.
     `set-and-setting` input assignments; applied nixfmt and grouped the input
     attributes.
 
-17. **Actionlint fragment missing from materialized hooks**: The generated
-    `lefthook.yml` omitted the actionlint command despite the actions fragment
-    being selected, causing the guardrail fidelity check to fail. Added the
-    actionlint command to both hook phases.
+17. **Actionlint/materialization guardrails**: Generated hooks and confirm app
+    omitted the actions fragment or wrapper. Aligned fragment lists and PATH.
 
-18. **Confirm app omitted the custom actionlint wrapper**: The wrapper was
-    defined as an extra package but was not added to the confirm app's PATH,
-    causing the coherence check to fail. Added it to `runtimeInputs`.
+18. **Actionlint evaluation**: The locked check passed a scalar workflow
+    prefix to `sourceByRegex`, which now requires a list. Supplied a list.
 
-19. **Actions fragment omitted from consumer materialization**: The guardrail
-    fidelity check detected the `actions` fragment, but the consumer flake and
-    confirm-app materialization declared only the other selected fragments.
-    Aligning both fragment lists makes the generated `lefthook.yml` match the
-    expected fragment composition.
-
-20. **Actionlint check fails during flake evaluation**: The locked
-    `set-and-setting` actionlint check passed a scalar workflow path prefix to
-    nixpkgs' `sourceByRegex`, which now requires a list of regular expressions.
-    This caused `nix flake check` to fail before running actionlint. Fixed by
-    supplying the workflow filter as a list through the generic check
-    interface.
+19. **Linter-coverage config missing**: Added the required empty exemption list.
