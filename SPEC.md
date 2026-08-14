@@ -185,3 +185,11 @@ under `pre-push`.
     Fixed. `flake.nix` was not formatted and Statix rejected the dotted
     `set-and-setting` input assignments; applied nixfmt and grouped the input
     attributes.
+
+17. **Actionlint/materialization guardrails**: Generated hooks and confirm app
+    omitted the actions fragment or wrapper. Aligned fragment lists and PATH.
+
+18. **Actionlint evaluation**: The locked check passed a scalar workflow
+    prefix to `sourceByRegex`, which now requires a list. Supplied a list.
+
+19. **Linter-coverage config missing**: Added the required empty exemption list.

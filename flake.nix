@@ -39,6 +39,7 @@
         ;
       fragments = [
         "base"
+        "actions"
         "nix"
         "shell"
         "ascii"
@@ -46,6 +47,11 @@
         "yaml"
       ];
       extraPackages = pkgs: {
+        actionlint = pkgs.writeShellApplication {
+          name = "lefthook-actionlint";
+          runtimeInputs = [ pkgs.actionlint ];
+          text = ''actionlint "$@"'';
+        };
         default = pkgs.writeShellApplication {
           name = "lefthook-vulnix-scan";
           runtimeInputs = [
@@ -71,6 +77,37 @@
       src = ./.;
     }
     // {
+      checks =
+        nixpkgs.lib.mapAttrs
+          (
+            system: checks:
+            checks
+            // {
+              actionlint = set-and-setting.lib.mkLefthookCheck {
+                pkgs = nixpkgs.legacyPackages.${system};
+                name = "actionlint";
+                wrapper = self.packages.${system}.actionlint;
+                src = nixpkgs.lib.sources.sourceByRegex (nixpkgs.lib.sources.sourceFilesBySuffices ./. [
+                  ".yml"
+                  ".yaml"
+                ]) [ "^\\.github/workflows/.*" ];
+                suffices = null;
+              };
+            }
+          )
+          (set-and-setting.lib.mkConsumerFlake {
+            inherit self nixpkgs set-and-setting;
+            fragments = [
+              "base"
+              "actions"
+              "nix"
+              "shell"
+              "ascii"
+              "markdown"
+              "yaml"
+            ];
+            src = ./.;
+          }).checks;
       # The locked mkConsumerFlake confirm app omits fragment wrappers from
       # PATH, although its coherence check requires them. Preserve the
       # upstream app while launching it with the materialized wrapper set.
@@ -90,13 +127,15 @@
                         pkgs = nixpkgs.legacyPackages.${system};
                         fragments = [
                           "base"
+                          "actions"
                           "nix"
                           "shell"
                           "ascii"
                           "markdown"
                           "yaml"
                         ];
-                      }).packages;
+                      }).packages
+                      ++ [ self.packages.${system}.actionlint ];
                     runtimeEnv.CONFIRM_PROGRAM = apps.confirm.program;
                     text = builtins.readFile ./confirm-with-fragment-wrappers.sh;
                   }
@@ -108,6 +147,7 @@
             inherit self nixpkgs set-and-setting;
             fragments = [
               "base"
+              "actions"
               "nix"
               "shell"
               "ascii"
