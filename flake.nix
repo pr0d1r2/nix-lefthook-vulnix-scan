@@ -18,6 +18,8 @@
 
     nix-vulnix-nvd-mirror.url = "github:pr0d1r2/nix-vulnix-nvd-mirror";
     nix-vulnix-nvd-mirror.inputs.nixpkgs.follows = "nixpkgs";
+    nix-vulnix-nvd-mirror.inputs.nixpkgs-lock.follows = "nixpkgs-lock";
+    nix-vulnix-nvd-mirror.inputs.set-and-setting.follows = "set-and-setting";
 
     nixpkgs-unstable.follows = "nixpkgs";
   };

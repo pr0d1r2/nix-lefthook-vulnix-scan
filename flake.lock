@@ -503,14 +503,20 @@
         "flake-utils": "flake-utils",
         "nixpkgs": [
           "nixpkgs"
+        ],
+        "nixpkgs-lock": [
+          "nixpkgs-lock"
+        ],
+        "set-and-setting": [
+          "set-and-setting"
         ]
       },
       "locked": {
-        "lastModified": 1786437756,
-        "narHash": "sha256-Trw/DFHVjCNLi9viZ8aUlGykdeRl5bhRA7jwR6pKBms=",
+        "lastModified": 1790015726,
+        "narHash": "sha256-HmxkYyeMtcfJUsaIyhg7ZK3El9loVlAC0hvXKAeFav8=",
         "owner": "pr0d1r2",
         "repo": "nix-vulnix-nvd-mirror",
-        "rev": "f64657b4763f1accaf5b2d0bac7c4a4cfc637cd7",
+        "rev": "71bdd5b682416002486751801bd24007f7b29a5f",
         "type": "github"
       },
       "original": {
