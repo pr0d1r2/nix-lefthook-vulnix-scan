@@ -16,8 +16,14 @@
       inputs.nixpkgs-lock.follows = "nixpkgs-lock";
     };
 
-    nix-vulnix-nvd-mirror.url = "github:pr0d1r2/nix-vulnix-nvd-mirror";
-    nix-vulnix-nvd-mirror.inputs.nixpkgs.follows = "nixpkgs";
+    nix-vulnix-nvd-mirror = {
+      url = "github:pr0d1r2/nix-vulnix-nvd-mirror";
+      inputs = {
+        nixpkgs.follows = "nixpkgs";
+        nixpkgs-lock.follows = "nixpkgs-lock";
+        set-and-setting.follows = "set-and-setting";
+      };
+    };
 
     nixpkgs-unstable.follows = "nixpkgs";
   };
@@ -43,8 +49,10 @@
         "nix"
         "shell"
         "ascii"
+        "bats"
         "markdown"
         "yaml"
+        "toml"
       ];
       extraPackages = pkgs: {
         actionlint = pkgs.writeShellApplication {
@@ -103,8 +111,10 @@
               "nix"
               "shell"
               "ascii"
+              "bats"
               "markdown"
               "yaml"
+              "toml"
             ];
             src = ./.;
           }).checks;
@@ -131,8 +141,10 @@
                           "nix"
                           "shell"
                           "ascii"
+                          "bats"
                           "markdown"
                           "yaml"
+                          "toml"
                         ];
                       }).packages
                       ++ [ self.packages.${system}.actionlint ];
@@ -151,8 +163,10 @@
               "nix"
               "shell"
               "ascii"
+              "bats"
               "markdown"
               "yaml"
+              "toml"
             ];
             src = ./.;
           }).apps;

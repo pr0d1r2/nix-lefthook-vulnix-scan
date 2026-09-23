@@ -1,8 +1,8 @@
 #!/usr/bin/env bats
 
 setup() {
-    load "$BATS_LIB_PATH/bats-support/load"
-    load "$BATS_LIB_PATH/bats-assert/load"
+    bats_load_library bats-support
+    bats_load_library bats-assert
 
     REPO_ROOT="$(cd "$BATS_TEST_DIRNAME/../.." && pwd)"
     SCRIPT="$REPO_ROOT/lefthook-vulnix-scan.sh"
