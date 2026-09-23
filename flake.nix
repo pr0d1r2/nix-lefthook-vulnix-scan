@@ -49,8 +49,10 @@
         "nix"
         "shell"
         "ascii"
+        "bats"
         "markdown"
         "yaml"
+        "toml"
       ];
       extraPackages = pkgs: {
         actionlint = pkgs.writeShellApplication {
@@ -109,8 +111,10 @@
               "nix"
               "shell"
               "ascii"
+              "bats"
               "markdown"
               "yaml"
+              "toml"
             ];
             src = ./.;
           }).checks;
@@ -137,8 +141,10 @@
                           "nix"
                           "shell"
                           "ascii"
+                          "bats"
                           "markdown"
                           "yaml"
+                          "toml"
                         ];
                       }).packages
                       ++ [ self.packages.${system}.actionlint ];
@@ -157,8 +163,10 @@
               "nix"
               "shell"
               "ascii"
+              "bats"
               "markdown"
               "yaml"
+              "toml"
             ];
             src = ./.;
           }).apps;
