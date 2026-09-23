@@ -54,14 +54,17 @@ missed.
 
 ## The guardrails are this repository's own
 
-This repository is gated by `lefthook.yml`. Before a machine-authored branch is
-pushed, it is run against that gate: the same checks a human gets on
-`git commit`, in the same environment continuous integration uses. A change the
-gate refuses is not pushed and no pull request is opened for it.
+This repository is gated by the workflow referenced from
+`.github/workflows/ci.yml`. Before a machine-authored branch is pushed, it is
+run against that gate: the same checks a human gets on `git commit`, in the
+same environment continuous integration uses. A change the gate refuses is
+not pushed and no pull request is opened for it. The local `lefthook.yml` is
+generated and gitignored, so it is not available in a fresh checkout.
 
 Run it yourself:
 
 ```sh
+nix develop
 lefthook run pre-commit --all-files
 ```
 
