@@ -1,15 +1,15 @@
 #!/usr/bin/env bats
 
 setup() {
-  load "${BATS_LIB_PATH}/bats-support/load.bash"
-  load "${BATS_LIB_PATH}/bats-assert/load.bash"
+  bats_load_library bats-support
+  bats_load_library bats-assert
 
-  TMPDIR="$(mktemp -d)"
-  export WATCH_LOG="$TMPDIR/watched"
+  TESTDIR="$(mktemp -d)"
+  export WATCH_LOG="$TESTDIR/watched"
 }
 
 teardown() {
-  rm -rf "$TMPDIR"
+  rm -rf "${TESTDIR:?}"
 }
 
 @test "watches dev.sh for changes" {
