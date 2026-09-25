@@ -51,6 +51,17 @@ run_script() {
     assert_output --partial "./result"
 }
 
+@test "clears a consumer PYTHONPATH that would shadow the patched vulnix" {
+    cat >> "$TEST_TEMP/bin/vulnix" <<'SH'
+echo "pythonpath=${PYTHONPATH-unset}" >> "$VULNIX_LOG"
+SH
+    mkdir "$TEST_TEMP/result"
+    PYTHONPATH="$TEST_TEMP/stock-vulnix/site-packages" run run_script
+    assert_success
+    run cat "$VULNIX_LOG"
+    assert_output --partial "pythonpath=unset"
+}
+
 @test "uses the pre-built cache offline by default" {
     mkdir "$TEST_TEMP/result"
     run run_script
