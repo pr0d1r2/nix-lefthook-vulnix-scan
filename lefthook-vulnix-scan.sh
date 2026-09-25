@@ -2,6 +2,12 @@
 # Lefthook-compatible vulnix scan wrapper.
 # NOTE: sourced by writeShellApplication — no shebang or set needed.
 
+# A consumer dev shell that also carries stock vulnix exports its
+# site-packages in PYTHONPATH, which Python searches before the wrapper's
+# own site dirs: the unpatched nvd.py wins, VULNIX_OFFLINE is ignored and
+# the scan live-downloads NVD feeds with a 10s timeout.
+unset PYTHONPATH
+
 results="${VULNIX_RESULTS:-result-darwin result}"
 whitelist="${VULNIX_WHITELIST:-.vulnix-whitelist.toml}"
 system_whitelist="${VULNIX_WHITELIST_SYSTEM:-.vulnix-whitelist-system.toml}"
