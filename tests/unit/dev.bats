@@ -30,6 +30,13 @@ teardown() {
     assert_output "/test/lib/share/bats"
 }
 
+@test "points the tdd-order hook at this repo's spec directory" {
+    cd "$TESTDIR/repo"
+    run bash -c 'unset LEFTHOOK_TDD_SPEC_DIR; source "$1"; echo "$LEFTHOOK_TDD_SPEC_DIR"' -- "$TESTDIR/dev.sh"
+    assert_success
+    assert_output "tests/unit"
+}
+
 @test "runs lefthook install when hooks are missing" {
     cd "$TESTDIR/repo"
     rm "$TESTDIR/repo/.git/hooks/pre-commit"
