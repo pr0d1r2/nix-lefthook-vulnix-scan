@@ -54,34 +54,21 @@
         "yaml"
         "toml"
       ];
-      extraPackages = pkgs: {
-        actionlint = pkgs.writeShellApplication {
-          name = "lefthook-actionlint";
-          runtimeInputs = [ pkgs.actionlint ];
-          text = ''actionlint "$@"'';
+      extraPackages =
+        pkgs:
+        {
+          actionlint = pkgs.writeShellApplication {
+            name = "lefthook-actionlint";
+            runtimeInputs = [ pkgs.actionlint ];
+            text = ''actionlint "$@"'';
+          };
+        }
+        // import ./scan-packages.nix {
+          inherit pkgs;
+          unstable = nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system};
+          nvdCache = nix-vulnix-nvd-mirror.packages.${pkgs.stdenv.hostPlatform.system}.nvd-cache;
+          script = ./lefthook-vulnix-scan.sh;
         };
-        default = pkgs.writeShellApplication {
-          name = "lefthook-vulnix-scan";
-          runtimeInputs = [
-            (nixpkgs-unstable.legacyPackages.${pkgs.stdenv.hostPlatform.system}.vulnix.overrideAttrs (old: {
-              postPatch = (old.postPatch or "") + ''
-                # Keep live-mirror fallback tolerant of slow responses.
-                substituteInPlace src/vulnix/nvd.py \
-                  --replace-fail 'timeout=10)' 'timeout=60)'
-                substituteInPlace src/vulnix/nvd.py \
-                  --replace-fail \
-                    'def update(self):' \
-                    $'def update(self):\n        if os.environ.get("VULNIX_OFFLINE") == "1":\n            return'
-                grep -q 'timeout=60)' src/vulnix/nvd.py
-                grep -q 'os.environ.get("VULNIX_OFFLINE")' src/vulnix/nvd.py
-              '';
-            }))
-          ];
-          runtimeEnv.VULNIX_CACHE_SOURCE =
-            nix-vulnix-nvd-mirror.packages.${pkgs.stdenv.hostPlatform.system}.nvd-cache;
-          text = builtins.readFile ./lefthook-vulnix-scan.sh;
-        };
-      };
       src = ./.;
     }
     // {

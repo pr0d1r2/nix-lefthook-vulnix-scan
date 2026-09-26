@@ -135,6 +135,24 @@ SH
     assert_output --partial "--mirror https://custom-mirror.example.com/"
 }
 
+@test "falls back to the default mirror when no cache source is set" {
+    mkdir "$TEST_TEMP/result"
+    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_CACHE_SOURCE= bash '$SCRIPT'"
+    assert_success
+    run cat "$VULNIX_LOG"
+    assert_output --partial "offline=0"
+    assert_output --partial "--mirror https://pr0d1r2.github.io/nix-vulnix-nvd-mirror/"
+}
+
+@test "prefers an explicit cache source over the default mirror" {
+    mkdir "$TEST_TEMP/result"
+    run run_script
+    assert_success
+    run cat "$VULNIX_LOG"
+    assert_output --partial "offline=1"
+    refute_output --partial "--mirror"
+}
+
 @test "respects VULNIX_RETRIES env var" {
     mkdir "$TEST_TEMP/result"
     cat > "$TEST_TEMP/bin/vulnix" <<'SH'

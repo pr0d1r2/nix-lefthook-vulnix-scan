@@ -26,15 +26,23 @@ if [ "$found" -eq 0 ]; then
   exit 0
 fi
 
+# A pre-built cache is optional. Baking one in as a build-time dependency
+# makes this package unbuildable whenever the mirror's pinned feed hashes
+# drift, even for consumers that scan through the mirror and never read it.
+default_mirror="https://pr0d1r2.github.io/nix-vulnix-nvd-mirror/"
+
 scan_args=()
 if [ -n "${VULNIX_MIRROR:-}" ]; then
   scan_args+=(--mirror "$VULNIX_MIRROR")
-else
+elif [ -n "${VULNIX_CACHE_SOURCE:-}" ]; then
   cache_dir="$(mktemp -d)"
   trap 'rm -rf "$cache_dir"' EXIT
   cp "$VULNIX_CACHE_SOURCE/Data.fs" "$cache_dir/Data.fs"
   scan_args+=(-c "$cache_dir")
   export VULNIX_OFFLINE=1
+else
+  VULNIX_MIRROR="$default_mirror"
+  scan_args+=(--mirror "$VULNIX_MIRROR")
 fi
 
 for r in $results; do
