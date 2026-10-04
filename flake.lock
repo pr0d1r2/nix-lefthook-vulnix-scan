@@ -640,11 +640,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1791020247,
-        "narHash": "sha256-lClM4Q+OSn7dbYgMhfG0x1xnzX+Kzy+6D6AiE3rOMEc=",
+        "lastModified": 1791109500,
+        "narHash": "sha256-lvIclfMmygz4+F8vjoj5OHQ7nQZf8s+PJEI/nax9REs=",
         "owner": "pr0d1r2",
         "repo": "nix-vulnix-nvd-mirror",
-        "rev": "8e3f398f5412bb557089cc5e2c0a2399166d61a7",
+        "rev": "7cb2f87e40d8b0ec65f8bf3742c20d4f1f06b6af",
         "type": "github"
       },
       "original": {
@@ -749,11 +749,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1790957371,
-        "narHash": "sha256-iL/YEzut0I+3i1fNnKSsZi8pJMGftE0hS2Mq1JEIUn4=",
+        "lastModified": 1791109275,
+        "narHash": "sha256-W9ElGpBgIKEJcbyU1L3KzdG7OyZxN1YmruseZFCBsB0=",
         "owner": "pr0d1r2",
         "repo": "set-and-setting",
-        "rev": "c54b884879d64492523421472069bf7709c912d3",
+        "rev": "69cb570cf4f66248efc918d3740171567d32a50f",
         "type": "github"
       },
       "original": {
