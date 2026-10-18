@@ -141,8 +141,6 @@ under `pre-push`.
     corresponding linter in `lefthook.yml`.
 
 9. ~~**SPEC.md editorconfig and file-size failures**~~: Fixed.
-    Indentation corrected to 4 spaces and `md: 10240` added to
-    `config/lefthook/file_size_limits.yml`.
 
 10. ~~**Missing markdownlint wrappers break CI**~~: Fixed. `lefthook.yml`
     referenced `lefthook-markdownlint` and `lefthook-markdownlint-agentic`,
