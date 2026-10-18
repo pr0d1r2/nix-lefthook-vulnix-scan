@@ -51,13 +51,15 @@ remotes:
 
 ## NVD cache
 
-Scans use the pre-built `Data.fs` from
-[nix-vulnix-nvd-mirror](https://github.com/pr0d1r2/nix-vulnix-nvd-mirror).
-The package copies it from the Nix store to a writable temporary directory and
-runs vulnix offline, so scans do not download NVD feeds.
+The `default` package uses the pre-built mirror at
+`https://pr0d1r2.github.io/nix-vulnix-nvd-mirror/` and downloads the feed at
+scan time. The `offline` package copies the pre-built `Data.fs` from
+[nix-vulnix-nvd-mirror](https://github.com/pr0d1r2/nix-vulnix-nvd-mirror) to a
+writable temporary directory and runs vulnix offline; use it for air-gapped
+scans.
 
-Set `VULNIX_MIRROR` to opt into live downloads from a custom mirror as a
-fallback. Retry settings apply only to this network fallback.
+Set `VULNIX_MIRROR` to use a custom mirror. Retry settings apply to network
+downloads only.
 
 ## Whitelists
 
@@ -97,7 +99,7 @@ real vulnerability in an application or runtime package.
 | `VULNIX_RESULTS` | `result-darwin result` | Space-separated list of result symlinks to scan |
 | `VULNIX_WHITELIST` | `.vulnix-whitelist.toml` | Path to project whitelist file |
 | `VULNIX_WHITELIST_SYSTEM` | `.vulnix-whitelist-system.toml` | Path to system whitelist file |
-| `VULNIX_MIRROR` | unset | NVD feed mirror URL; enables the network fallback |
+| `VULNIX_MIRROR` | project mirror | NVD feed mirror URL; override the default mirror |
 | `VULNIX_RETRIES` | `3` | Network fallback retry attempts |
 | `VULNIX_RETRY_DELAY` | `5` | Network fallback base delay (exponential backoff) |
 | `LEFTHOOK_VULNIX_SCAN_TIMEOUT` | `120` | Outer timeout in seconds |

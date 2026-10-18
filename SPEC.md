@@ -82,6 +82,7 @@ environment variables.
 | Output | Description |
 | --- | --- |
 | `packages.<system>.default` | `lefthook-vulnix-scan` wrapped shell application |
+| `packages.<system>.offline` | `lefthook-vulnix-scan` wrapped shell application using the bundled NVD cache |
 | `devShells.<system>.default` | Dev shell with all linters, bats, lefthook, and vulnix |
 | `devShells.<system>.ci` | Alias for `default` dev shell |
 
