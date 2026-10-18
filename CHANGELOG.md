@@ -4,5 +4,5 @@ All notable changes to this project are documented here.
 
 ## Unreleased
 
-- Use the pre-built vulnix NVD cache offline by default, retaining
-  `VULNIX_MIRROR` as an explicit network fallback.
+- Use the project's vulnix NVD mirror by default, with an `offline` package
+  output for air-gapped scans.
