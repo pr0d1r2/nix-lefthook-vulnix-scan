@@ -6,11 +6,21 @@
 > what it may not, and what to check before trusting anything in this tree.
 <!-- hallucinogen:autonomy-disclaimer end -->
 
-[![CI](https://github.com/pr0d1r2/nix-lefthook-vulnix-scan/actions/workflows/ci.yml/badge.svg)](https://github.com/pr0d1r2/nix-lefthook-vulnix-scan/actions/workflows/ci.yml)
+[![CI](https://github.com/pr0d1r2/nix-lefthook-vulnix-scan/actions/workflows/ci.yml/badge.svg)](https://github.com/pr0d1r2/nix-lefthook-vulnix-scan/actions/workflows/ci.yml) [![NixOS 26.05](https://img.shields.io/badge/NixOS-26.05-blue.svg?logo=nixos)](https://nixos.org)
 
 Lefthook-compatible vulnix vulnerability scanner for nix build results, packaged as a Nix flake.
 
 Scans nix build result symlinks (`result-darwin`, `result`) for known CVEs using [vulnix](https://github.com/nix-community/vulnix). Supports project-specific whitelists.
+
+## Architecture
+
+```mermaid
+flowchart LR
+  consumer["consumer lefthook.yml"] -->|"remotes"| remote["lefthook-remote.yml"]
+  remote -->|"pre-push"| lefthook_vulnix_scan["lefthook-vulnix-scan"]
+  lefthook_vulnix_scan -->|"inlines"| confirm_with_fragment_wrappers_sh["confirm-with-fragment-wrappers.sh"]
+  lefthook_vulnix_scan -->|"exit status"| consumer
+```
 
 ## Usage
 
@@ -75,6 +85,19 @@ cp .vulnix-whitelist-system.toml.example .vulnix-whitelist-system.toml
 ```bash
 nix develop  # or use direnv via .envrc
 bats tests/unit
+```
+
+### Development architecture
+
+```mermaid
+flowchart LR
+  envrc[".envrc"] -->|"use flake"| flake["flake.nix"]
+  flake -->|"mkConsumerFlake"| sas["set-and-setting"]
+  flake -->|"devShell"| shell["dev shell"]
+  shell -->|"on entry"| devsh["dev.sh"]
+  sas -->|"assembled hooks"| lh["lefthook.yml"]
+  lh -->|"pre-commit / pre-push"| checks["linters, bats, nix flake check"]
+  ci[".github/workflows/ci.yml"] -->|"guardrails.yml"| checks
 ```
 
 ## License
