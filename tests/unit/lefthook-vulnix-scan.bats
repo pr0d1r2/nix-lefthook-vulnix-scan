@@ -126,6 +126,29 @@ SH
     assert_output --partial "my-system-whitelist.toml"
 }
 
+@test "passes a version-independent collision whitelist to vulnix" {
+    mkdir "$TEST_TEMP/result"
+    cat > "$TEST_TEMP/my-system-whitelist.toml" <<'TOML'
+["yoke"]
+cve = ["CVE-2026-26055"]
+comment = "Rust crate; unrelated NVD product"
+TOML
+    cat > "$TEST_TEMP/bin/vulnix" <<'SH'
+#!/usr/bin/env bash
+for arg in "$@"; do
+    if [ "$read_next" = 1 ]; then
+        grep -q '^\["yoke"\]$' "$arg"
+        exit
+    fi
+    [ "$arg" = "--whitelist" ] && read_next=1
+done
+exit 1
+SH
+    chmod +x "$TEST_TEMP/bin/vulnix"
+    run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_WHITELIST_SYSTEM='my-system-whitelist.toml' bash '$SCRIPT'"
+    assert_success
+}
+
 @test "respects VULNIX_MIRROR env var" {
     mkdir "$TEST_TEMP/result"
     run bash -c "cd '$TEST_TEMP' && PATH='$TEST_TEMP/bin:$PATH' VULNIX_MIRROR='https://custom-mirror.example.com/' bash '$SCRIPT'"
