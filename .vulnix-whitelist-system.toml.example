@@ -40,3 +40,11 @@
 # SCM vendor deps
 ["mercurial-7.1.2-vendor"]
 ["mercurial-7.1.2-vendor-staging"]
+
+# For a reviewed vendored Rust/Haskell name collision, omit the version so a
+# dependency bump does not create another entry. Verify it in the ecosystem's
+# advisory database first, and include the matching CVE(s) when appropriate.
+# ["example-crate"]
+# cve = ["CVE-0000-00000"]
+# comment = "Vendored crate; CVE belongs to an unrelated NVD product"
+# issue_url = ["https://github.com/advisories"]

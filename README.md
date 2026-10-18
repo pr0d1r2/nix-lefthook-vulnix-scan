@@ -68,6 +68,28 @@ fallback. Retry settings apply only to this network fallback.
 cp .vulnix-whitelist-system.toml.example .vulnix-whitelist-system.toml
 ```
 
+### Vendored Rust and Haskell dependencies
+
+vulnix matches NVD records by derivation name and version. Vendored Cargo
+crates and Hackage packages can therefore collide with an unrelated product
+that happens to use the same name. Rust and Haskell dependencies should be
+checked with RustSec (`cargo audit`) and the Haskell security database; NVD
+matches for a colliding vendored package are not evidence that the crate or
+library is affected.
+
+For a reviewed collision, whitelist the package name without pinning a
+version. This keeps a crate bump from requiring another whitelist entry:
+
+```toml
+["yoke"]
+comment = "Rust crate; CVE refers to the unrelated Yoke Kubernetes deployer"
+issue_url = ["https://github.com/advisories"]
+```
+
+The entry is still package-specific and should include the CVE(s) when the
+exception is only valid for particular advisories. Do not use this form for a
+real vulnerability in an application or runtime package.
+
 ## Configuration
 
 | Variable | Default | Description |
