@@ -640,11 +640,11 @@
         ]
       },
       "locked": {
-        "lastModified": 1792312220,
-        "narHash": "sha256-JAVl47c8IkyUGgaZoWVV5JQCX74qlNJJUDbEwx5IWdY=",
+        "lastModified": 1793829374,
+        "narHash": "sha256-7zk+MLFC7hnOCzR6a36jSqLrKDwefGXP+tKodanhhsk=",
         "owner": "pr0d1r2",
         "repo": "nix-vulnix-nvd-mirror",
-        "rev": "a33c2054a6f2c7e2e40d8a88b78a4d185b5b3303",
+        "rev": "91dbcb79bcc9c77e3b9c25da97f0332cce01d291",
         "type": "github"
       },
       "original": {
