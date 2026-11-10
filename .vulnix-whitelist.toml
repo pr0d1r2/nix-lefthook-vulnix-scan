@@ -134,3 +134,9 @@
 ["python-2.7.18.12"]
 ["setuptools-44.0.0-source"]
 ["wheel-0.37.1-source"]
+
+# ruby 3.4.11: CVE-2026-97229 (10.0), fix in 3.4.12; nixos-26.05 backport
+# tracked in pr0d1r2/nixpkgs-lock#94. Scoped to this version and CVE.
+["ruby-3.4.11"]
+cve = ["CVE-2026-97229"]
+until = 2026-12-10
